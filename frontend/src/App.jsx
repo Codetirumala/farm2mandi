@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -13,10 +13,23 @@ import Transport from './pages/Transport';
 import Tracking from './pages/Tracking';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Profile from './pages/Profile';
 import Footer from './components/Footer';
 import NavBar from './components/NavBar';
+import RequireAuth from './components/RequireAuth';
+
+import Loader from './components/Loader';
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 3000); // show loader for 3s
+    return () => clearTimeout(t);
+  }, []);
+
+  if (loading) return <Loader />;
+
   return (
     <div className="app">
       <NavBar />
@@ -27,12 +40,13 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/welcome2" element={<Welcome2 />} />
-          <Route path="/input" element={<InputPage />} />
-          <Route path="/prediction" element={<Prediction />} />
-          <Route path="/recommendation" element={<Recommendation />} />
-          <Route path="/map" element={<MapView />} />
-          <Route path="/transport" element={<Transport />} />
-          <Route path="/tracking" element={<Tracking />} />
+          <Route path="/input" element={<RequireAuth><InputPage /></RequireAuth>} />
+          <Route path="/prediction" element={<RequireAuth><Prediction /></RequireAuth>} />
+          <Route path="/recommendation" element={<RequireAuth><Recommendation /></RequireAuth>} />
+          <Route path="/map" element={<RequireAuth><MapView /></RequireAuth>} />
+          <Route path="/transport" element={<RequireAuth><Transport /></RequireAuth>} />
+          <Route path="/tracking" element={<RequireAuth><Tracking /></RequireAuth>} />
+          <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>

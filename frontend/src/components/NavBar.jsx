@@ -69,6 +69,11 @@ export default function NavBar(){
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
+                        <ListItemButton component={RouterLink} to={'/profile'}>
+                          <ListItemText primary={'Profile'} />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/transport'}>
                           <ListItemText primary={'Transport'} />
                         </ListItemButton>
@@ -108,6 +113,7 @@ export default function NavBar(){
               <>
                 <Button color="inherit" component={RouterLink} to={'/input'}>Input</Button>
                 <Button color="inherit" component={RouterLink} to={'/transport'}>Transport</Button>
+                <Button color="inherit" component={RouterLink} to={'/profile'}>Profile</Button>
               </>
             )}
             {user ? (

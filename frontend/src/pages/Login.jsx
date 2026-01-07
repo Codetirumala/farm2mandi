@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import { Avatar, Box, Button, Container, Grid, IconButton, InputAdornment, Link, Paper, TextField, Typography, Alert, CircularProgress, Grow } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { login } from '../api';
+import { getProfile } from '../api';
 
 export default function Login(){
   const [form, setForm] = useState({ email:'', password:'' });
@@ -12,6 +13,38 @@ export default function Login(){
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const nav = useNavigate();
+  const location = useLocation();
+
+  // support a ?next=/some/path query param to redirect after login
+  const qs = new URLSearchParams(location.search);
+  const nextPath = qs.get('next');
+
+  useEffect(() => {
+    // If there's a user saved in localStorage we should verify it with the server
+    // (localStorage can be stale). If verification fails remove the stale entry and
+    // show the login form. If verification succeeds, navigate to next or home.
+    let mounted = true;
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      getProfile().then(() => {
+        if (!mounted) return;
+        if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
+      }).catch(() => {
+        // stale or invalid session: remove local cache and allow login
+        localStorage.removeItem('user');
+      });
+      return () => { mounted = false; };
+    }
+
+    // no local user — still check session cookie silently and redirect if valid
+    getProfile().then(() => {
+      if (!mounted) return;
+      if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
+    }).catch(() => {
+      // not logged in — show login form
+    });
+    return () => { mounted = false; };
+  }, [nav, nextPath]);
 
   async function submit(e){
     e.preventDefault();
@@ -22,7 +55,8 @@ export default function Login(){
       // server stores JWT in an httpOnly cookie; keep minimal user in localStorage
       localStorage.setItem('user', JSON.stringify(data.user));
       setLoading(false);
-      nav('/welcome2');
+  // after successful login, navigate to nextPath if provided and safe
+    if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
     }catch(e){
       setLoading(false);
       setErr(e.response?.data?.error || e.message || 'Login failed');

@@ -31,3 +31,28 @@ export async function track(vehicleId) {
   const res = await client.get(`/track/${vehicleId}`);
   return res.data;
 }
+
+export async function getProfile() {
+  const res = await client.get('/auth/me');
+  return res.data;
+}
+
+export async function updateProfile(data) {
+  const res = await client.put('/auth/me', data);
+  return res.data;
+}
+
+export async function changePassword(body) {
+  const res = await client.post('/auth/change-password', body);
+  return res.data;
+}
+
+export async function forgotOtp(body) {
+  const res = await client.post('/auth/forgot', body);
+  return res.data;
+}
+
+export async function resetWithOtp(body) {
+  const res = await client.post('/auth/reset-otp', body);
+  return res.data;
+}

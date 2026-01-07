@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Avatar, Box, Button, Container, Grid, Paper, TextField, Typography, Alert, CircularProgress, Grow, Link } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { register } from '../api';
+import { getProfile } from '../api';
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
+
+  useEffect(() => {
+    // If there's a user saved in localStorage we should verify it with the server
+    // because localStorage can be stale. If verification fails remove the entry so
+    // the register page remains accessible.
+    let mounted = true;
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      getProfile().then(() => {
+        if (!mounted) return;
+        nav('/');
+      }).catch(() => {
+        localStorage.removeItem('user');
+      });
+      return () => { mounted = false; };
+    }
+
+    // No local user; verify session cookie silently and redirect if active
+    getProfile().then(() => {
+      if (!mounted) return;
+      nav('/');
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, [nav]);
 
   async function submit(e) {
     e.preventDefault();
