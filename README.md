@@ -3,7 +3,7 @@
 
 Farm2Mandi — AI-driven agricultural market recommendation system (scaffold).
 
-This repository contains a minimal backend (Node + Express) and a Vite + React frontend scaffold. The backend includes stubbed endpoints for authentication, price prediction, mandi recommendation, transport options, and vehicle tracking. Replace the stubbed logic with your trained LSTM and XGBoost models and integrate logistics providers where noted.
+This repository contains a minimal backend (Node + Express) and a Vite + React frontend scaffold. The backend includes stubbed endpoints for authentication, price prediction, mandi recommendation, transport options, and vehicle tracking. Replace the stubbed logic with your trained LSTM and XGBoost models and integrate logistics provider where noted.
 
 ## Quick start (Windows PowerShell)
 
