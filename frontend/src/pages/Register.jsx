@@ -33,27 +33,24 @@ export default function Register() {
   const nav = useNavigate();
 
   useEffect(() => {
-    // If there's a user saved in localStorage we should verify it with the server
-    // because localStorage can be stale. If verification fails remove the entry so
-    // the register page remains accessible.
-    let mounted = true;
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      getProfile().then(() => {
-        if (!mounted) return;
-        nav('/');
-      }).catch(() => {
-        localStorage.removeItem('user');
-      });
-      return () => { mounted = false; };
-    }
-
-    // No local user; verify session cookie silently and redirect if active
-    getProfile().then(() => {
-      if (!mounted) return;
-      nav('/');
-    }).catch(() => {});
-    return () => { mounted = false; };
+    // If you want to block registration for logged-in users, uncomment below:
+    // let mounted = true;
+    // const stored = localStorage.getItem('user');
+    // if (stored) {
+    //   getProfile().then(() => {
+    //     if (!mounted) return;
+    //     nav('/');
+    //   }).catch(() => {
+    //     localStorage.removeItem('user');
+    //   });
+    //   return () => { mounted = false; };
+    // }
+    // getProfile().then(() => {
+    //   if (!mounted) return;
+    //   nav('/');
+    // }).catch(() => {});
+    // return () => { mounted = false; };
+    // By default, do not redirect. Only do so if you want to block access for logged-in users.
   }, [nav]);
 
   async function submit(e) {
