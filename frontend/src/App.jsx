@@ -14,6 +14,8 @@ import Tracking from './pages/Tracking';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
+import Browse from './pages/Browse';
+import DriverLocation from './pages/DriverLocation';
 import Footer from './components/Footer';
 import NavBar from './components/NavBar';
 import RequireAuth from './components/RequireAuth';
@@ -47,6 +49,8 @@ export default function App() {
           <Route path="/transport" element={<RequireAuth><Transport /></RequireAuth>} />
           <Route path="/tracking" element={<RequireAuth><Tracking /></RequireAuth>} />
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+          <Route path="/driver-location" element={<RequireAuth><DriverLocation /></RequireAuth>} />
+          <Route path="/browse" element={<Browse />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>

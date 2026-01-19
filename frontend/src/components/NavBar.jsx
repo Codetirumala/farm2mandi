@@ -14,7 +14,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import logo from '../logo.svg';
+import logo from './farm2mandi1.png';
 
 const pages = [
   { label: 'Home', to: '/' },
@@ -28,6 +28,7 @@ export default function NavBar(){
   const [open, setOpen] = React.useState(false);
   const nav = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const isDriver = user && user.role === 'driver';
 
   function handleLogout(){
     import('../api').then(m=>m.logout()).catch(()=>{}).finally(()=>{
@@ -37,10 +38,10 @@ export default function NavBar(){
   }
 
   return (
-    <AppBar position="sticky" color="primary" elevation={3}>
-      <Toolbar>
+    <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'inherit', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} elevation={3}>
+      <Toolbar sx={{ minHeight: '64px !important', height: '64px' }}>
         <Box sx={{ display:'flex', alignItems:'center', cursor:'pointer' }} onClick={()=>nav('/') }>
-          <img src={logo} alt="Farm2Mandi" style={{ height:36, marginRight:12 }} />
+          <img src={logo} alt="Farm2Mandi" style={{ height:105, marginRight:12, objectFit: 'contain', maxWidth: '400px' }} />
           
         </Box>
 
@@ -48,7 +49,7 @@ export default function NavBar(){
 
         {isMobile ? (
           <>
-            <IconButton edge="end" color="inherit" onClick={()=>setOpen(true)}>
+            <IconButton edge="end" sx={{ color: '#333' }} onClick={()=>setOpen(true)}>
               <MenuIcon />
             </IconButton>
             <Drawer anchor="right" open={open} onClose={()=>setOpen(false)}>
@@ -61,16 +62,11 @@ export default function NavBar(){
                       </ListItemButton>
                     </ListItem>
                   ))}
-                  {user && (
+                  {user && !isDriver && (
                     <>
                       <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/input'}>
                           <ListItemText primary={'Input'} />
-                        </ListItemButton>
-                      </ListItem>
-                      <ListItem disablePadding>
-                        <ListItemButton component={RouterLink} to={'/profile'}>
-                          <ListItemText primary={'Profile'} />
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
@@ -79,6 +75,13 @@ export default function NavBar(){
                         </ListItemButton>
                       </ListItem>
                     </>
+                  )}
+                  {user && isDriver && (
+                    <ListItem disablePadding>
+                      <ListItemButton component={RouterLink} to={'/driver-location'}>
+                        <ListItemText primary={'Location'} />
+                      </ListItemButton>
+                    </ListItem>
                   )}
                   {!user ? (
                     <>
@@ -94,11 +97,18 @@ export default function NavBar(){
                       </ListItem>
                     </>
                   ) : (
-                    <ListItem disablePadding>
-                      <ListItemButton onClick={handleLogout}>
-                        <ListItemText primary={'Logout'} />
-                      </ListItemButton>
-                    </ListItem>
+                    <>
+                      <ListItem disablePadding>
+                        <ListItemButton onClick={() => { nav('/profile'); setOpen(false); }}>
+                          <ListItemText primary={user.name} />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding>
+                        <ListItemButton onClick={handleLogout}>
+                          <ListItemText primary={'Logout'} />
+                        </ListItemButton>
+                      </ListItem>
+                    </>
                   )}
                 </List>
               </Box>
@@ -107,24 +117,31 @@ export default function NavBar(){
         ) : (
           <Box sx={{ display:'flex', gap:1, alignItems:'center' }}>
             {pages.map(p=> (
-              <Button key={p.to} color="inherit" component={RouterLink} to={p.to}>{p.label}</Button>
+              <Button key={p.to} sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={p.to}>{p.label}</Button>
             ))}
-            {user && (
+            {user && !isDriver && (
               <>
-                <Button color="inherit" component={RouterLink} to={'/input'}>Input</Button>
-                <Button color="inherit" component={RouterLink} to={'/transport'}>Transport</Button>
-                <Button color="inherit" component={RouterLink} to={'/profile'}>Profile</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/input'}>Input</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/transport'}>Transport</Button>
               </>
+            )}
+            {user && isDriver && (
+              <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/driver-location'}>Location</Button>
             )}
             {user ? (
               <>
-                <Typography sx={{ ml:2, mr:1 }}>{user.name}</Typography>
-                <Button color="inherit" onClick={handleLogout}>Logout</Button>
+                <Typography 
+                  sx={{ ml:1, mr:2, color: '#333', cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} 
+                  onClick={() => nav('/profile')}
+                >
+                  {user.name}
+                </Typography>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} onClick={handleLogout}>Logout</Button>
               </>
             ) : (
               <>
-                <Button color="inherit" component={RouterLink} to={'/login'}>Login</Button>
-                <Button color="secondary" variant="contained" component={RouterLink} to={'/register'} sx={{ ml:1 }}>Register</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/login'}>Login</Button>
+                <Button color="primary" variant="contained" component={RouterLink} to={'/register'} sx={{ ml:1 }}>Register</Button>
               </>
             )}
           </Box>

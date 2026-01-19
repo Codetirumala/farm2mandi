@@ -1,26 +1,89 @@
-# Farm2Mandi - Backend (stub)
+# Farm2Mandi - Backend
 
-This is a minimal backend scaffold for the Farm2Mandi project. It provides simple API endpoints you can extend to wire your LSTM/XGBoost models and logistics integrations.
+This is the backend API for the Farm2Mandi project. It provides endpoints for authentication, price prediction, and mandi recommendations.
 
-## Endpoints
+## Setup
 
-- POST /api/auth/register  - { name, email, password }
-- POST /api/auth/login     - { email, password }
-- POST /api/auth/forgot    - { email } (stub)
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- POST /api/predict        - { crop, date, location } -> { predictedPrice, mandis }
-- POST /api/transport-options - { from, to, quantity } -> trucks
-- GET  /api/track/:vehicleId -> timeline
+2. Create a `.env` file in the `backend/` directory:
+   ```
+   MONGO_URI=mongodb://localhost:27017/farm-mandi
+   JWT_SECRET=your-secret-key-here
+   PORT=5000
+   FRONTEND_ORIGIN=http://localhost:5173
+   ```
 
-## Run (Windows PowerShell)
+3. Run the backend:
+   ```bash
+   npm run dev
+   ```
 
-1. cd backend
-2. npm install
-3. Create a `.env` file in `backend/` (see `.env.example`) and set `MONGO_URI` and `JWT_SECRET`.
-4. npm run dev   # requires nodemon, or use npm start
+## Database Seeding
+
+To populate the database with mandi and price data from the CSV:
+
+1. Ensure the CSV file is at `frontend/src/dataset/Agriculture_price_dataset.csv`
+2. Run the seed script:
+   ```bash
+   npm run seed
+   ```
+
+**Note:** The seed script uses approximate coordinates based on state. For accurate coordinates, you'll need to use a geocoding API (e.g., Google Maps Geocoding API) to update the mandi locations.
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register a new farmer
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Get current user profile
+- `PUT /api/auth/me` - Update profile
+- `POST /api/auth/change-password` - Change password
+- `POST /api/auth/forgot` - Request password reset OTP
+- `POST /api/auth/reset-otp` - Reset password with OTP
+
+### Prediction & Recommendations
+- `GET /api/predict?commodity=Wheat&date=2025-11-06&lat=28.7041&lng=77.1025&quantity=1000` - Get price prediction and top 3 mandi recommendations
+  - Query parameters:
+    - `commodity` (required) - Commodity name (e.g., Wheat, Rice, Tomato)
+    - `date` (required) - Date in YYYY-MM-DD format
+    - `lat` (required) - Farmer's latitude
+    - `lng` (required) - Farmer's longitude
+    - `quantity` (optional) - Quantity in kg (default: 1000)
+  
+- `POST /api/predict` - Alternative endpoint (backward compatible)
+  - Body: `{ commodity, date, lat, lng, quantity }`
+
+### Transport & Tracking
+- `POST /api/transport-options` - Get transport options
+- `GET /api/track/:vehicleId` - Track vehicle location
+
+## Architecture
+
+### Models
+- **Farmer** - User/farmer data
+- **Mandi** - Agricultural market information with coordinates
+- **Price** - Historical price data
+
+### Utilities
+- **distance.js** - Haversine formula for distance calculation
+- **prediction.js** - Price prediction logic (uses historical data average)
+
+### Flow
+1. Frontend sends GET request with commodity, date, and farmer coordinates
+2. Backend predicts price using historical data
+3. Backend finds all mandis for that commodity
+4. Backend calculates distance for each mandi using Haversine formula
+5. Backend calculates transport cost (distance × 10)
+6. Backend calculates profit (revenue - transport cost)
+7. Backend sorts by profit and returns top 3 mandis
 
 ## Notes
 
-- Authentication now uses MongoDB and a `Farmer` model. Register/login stores farmers in the database.
-- Prediction/recommendation endpoints are still stubbed. Replace with your model code (load model and call prediction function).
-- Set `JWT_SECRET` environment variable to a secure value in production.
+- Price prediction uses a simple average of recent modal prices. For more sophisticated predictions, integrate LSTM/ARIMA models if required by your mentor or for a final-year deep ML project.
+- Distance calculation uses the Haversine formula. You can later integrate Google Maps API for more accurate road distances.
+- Transport cost is calculated as `distance_km × 10`. This can be improved with real logistics provider APIs.
