@@ -20,30 +20,26 @@ export default function Login(){
   const nextPath = qs.get('next');
 
   useEffect(() => {
-    // If there's a user saved in localStorage we should verify it with the server
-    // (localStorage can be stale). If verification fails remove the stale entry and
-    // show the login form. If verification succeeds, navigate to next or home.
-    let mounted = true;
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      getProfile().then(() => {
-        if (!mounted) return;
-        if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
-      }).catch(() => {
-        // stale or invalid session: remove local cache and allow login
-        localStorage.removeItem('user');
-      });
-      return () => { mounted = false; };
-    }
-
-    // no local user — still check session cookie silently and redirect if valid
-    getProfile().then(() => {
-      if (!mounted) return;
-      if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
-    }).catch(() => {
-      // not logged in — show login form
-    });
-    return () => { mounted = false; };
+    // If you want to block login for logged-in users, uncomment below:
+    // let mounted = true;
+    // const stored = localStorage.getItem('user');
+    // if (stored) {
+    //   getProfile().then(() => {
+    //     if (!mounted) return;
+    //     if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
+    //   }).catch(() => {
+    //     localStorage.removeItem('user');
+    //   });
+    //   return () => { mounted = false; };
+    // }
+    // getProfile().then(() => {
+    //   if (!mounted) return;
+    //   if (nextPath && nextPath.startsWith('/')) nav(nextPath); else nav('/');
+    // }).catch(() => {
+    //   // not logged in — show login form
+    // });
+    // return () => { mounted = false; };
+    // By default, do not redirect. Only do so if you want to block access for logged-in users.
   }, [nav, nextPath]);
 
   async function submit(e){
