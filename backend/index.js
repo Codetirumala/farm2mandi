@@ -16,10 +16,11 @@ const transportRoutes = require('./routes/transport');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configure CORS to allow both local and deployed frontend origins
+// Configure CORS to allow the frontend origin and include credentials (cookies)
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://farm2mandi.onrender.com', // replace with your deployed frontend URL if different
+  'http://localhost:5173', // Vite default
+  'http://localhost:3000', // React default
+  'https://farm2mandi.onrender.com', // your production frontend
 ];
 app.use(
   cors({
@@ -35,6 +36,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 

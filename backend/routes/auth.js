@@ -8,6 +8,17 @@ const { requireAuth } = require('../middleware/authMiddleware');
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
+// Helper for cookie options (works for both local and production)
+function getCookieOptions() {
+  const isProd = process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: isProd, // true in production, false locally
+    sameSite: isProd ? 'none' : 'lax', // 'none' for cross-site in prod, 'lax' locally
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+}
+
 // Register (creates a farmer or driver based on role)
 router.post('/register', async (req, res) => {
   try {
@@ -53,12 +64,7 @@ router.post('/register', async (req, res) => {
       await driver.save();
 
       const token = jwt.sign({ id: driver._id, email: driver.email, role: driver.role }, JWT_SECRET, { expiresIn: '7d' });
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
+      res.cookie('token', token, getCookieOptions());
 
       res.json({ user: { id: driver._id, name: driver.name, email: driver.email, role: driver.role } });
     } else {
@@ -79,12 +85,7 @@ router.post('/register', async (req, res) => {
       await farmer.save();
 
       const token = jwt.sign({ id: farmer._id, email: farmer.email, role: farmer.role }, JWT_SECRET, { expiresIn: '7d' });
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
+      res.cookie('token', token, getCookieOptions());
 
       res.json({ user: { id: farmer._id, name: farmer.name, email: farmer.email, role: farmer.role } });
     }
@@ -115,12 +116,7 @@ router.post('/login', async (req, res) => {
     if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
     
     const token = jwt.sign({ id: user._id, email: user.email, role: user.role || userType }, JWT_SECRET, { expiresIn: '7d' });
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie('token', token, getCookieOptions());
     
     res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role || userType } });
   } catch (err) {
@@ -300,12 +296,7 @@ router.post('/reset-otp', async (req, res) => {
 
     // Optionally sign-in user by setting cookie
     const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie('token', token, getCookieOptions());
 
     res.json({ message: 'Password reset successful' });
   } catch (err) {

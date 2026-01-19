@@ -12,6 +12,7 @@ import Rating from '@mui/material/Rating';
 // Using existing icons to avoid potential resolution issues with some icon names
 // (if you prefer these specific icons, ensure @mui/icons-material is installed and Vite restarted)
 
+
 export default function Home(){
   const phrases = ['price signals', 'market demand', 'distance & transport', 'estimated net profit'];
   const [display, setDisplay] = useState('price signals');
@@ -28,6 +29,7 @@ export default function Home(){
 
   return (
     <div>
+    
       {/* Hero with video loop in a small card and animated subtitle */}
       <Box sx={{ bgcolor: 'background.paper', py: { xs:6, md:12 } }}>
         <Container maxWidth="lg">
