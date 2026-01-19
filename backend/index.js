@@ -16,9 +16,25 @@ const transportRoutes = require('./routes/transport');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configure CORS to allow the frontend origin and include credentials (cookies)
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
-app.use(require('cors')({ origin: FRONTEND_ORIGIN, credentials: true }));
+// Configure CORS to allow both local and deployed frontend origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://farm2mandi.onrender.com', // replace with your deployed frontend URL if different
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
