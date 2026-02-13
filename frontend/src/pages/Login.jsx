@@ -7,8 +7,10 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { login } from '../api';
 import { getProfile } from '../api';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Login(){
+  const { t } = useLanguage();
   const [form, setForm] = useState({ email:'', password:'' });
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
@@ -78,8 +80,8 @@ export default function Login(){
                 </Avatar>
               </Grid>
               <Grid item xs>
-                <Typography variant="h5" sx={{ fontWeight:800 }}>Welcome back</Typography>
-                <Typography variant="body2" color="text.secondary">Sign in to access recommendations and transport options</Typography>
+                <Typography variant="h5" sx={{ fontWeight:800 }}>{t('welcomeBack')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('signInDesc')}</Typography>
               </Grid>
             </Grid>
 
@@ -87,7 +89,7 @@ export default function Login(){
 
             <Box component="form" onSubmit={submit} sx={{ mt:3 }}>
               <TextField
-                label="Email"
+                label={t('emailLabel')}
                 name="email"
                 value={form.email}
                 onChange={e=>setForm(f=>({ ...f, email:e.target.value }))}
@@ -98,7 +100,7 @@ export default function Login(){
               />
 
               <TextField
-                label="Password"
+                label={t('passwordLabel')}
                 name="password"
                 value={form.password}
                 onChange={e=>setForm(f=>({ ...f, password:e.target.value }))}
@@ -118,17 +120,17 @@ export default function Login(){
               />
 
               <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center', mt:1 }}>
-                <Link component={RouterLink} to="/forgot" variant="body2" sx={{ color:'primary.main' }}>Forgot password?</Link>
-                <Link component={RouterLink} to="/register" variant="body2" sx={{ color:'primary.main' }}>Create account</Link>
+                <Link component={RouterLink} to="/forgot" variant="body2" sx={{ color:'primary.main' }}>{t('forgotPassword')}</Link>
+                <Link component={RouterLink} to="/register" variant="body2" sx={{ color:'primary.main' }}>{t('createAccount')}</Link>
               </Box>
 
               <Button type="submit" variant="contained" fullWidth sx={{ mt:3, py:1.5, backgroundColor:'#2e7d32', color:'#fff', fontWeight:700, boxShadow:'0 6px 18px rgba(46,125,50,0.28)', textTransform:'uppercase' }} disabled={loading}>
-                {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign in'}
+                {loading ? <CircularProgress size={20} color="inherit" /> : t('signIn')}
               </Button>
             </Box>
 
             <Box sx={{ mt:3, textAlign:'center' }}>
-              <Typography variant="caption" color="text.secondary">By signing in you agree to our Terms and Privacy Policy.</Typography>
+              <Typography variant="caption" color="text.secondary">{t('termsText')}</Typography>
             </Box>
           </Paper>
         </Container>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { predict } from '../api';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function InputPage(){
   const [form, setForm] = useState({ 
@@ -15,11 +16,12 @@ export default function InputPage(){
   const [loading, setLoading] = useState(false);
   const [locationStatus, setLocationStatus] = useState('');
   const nav = useNavigate();
+  const { t } = useLanguage();
 
   // Get user's location using browser geolocation API
   useEffect(() => {
     if (navigator.geolocation) {
-      setLocationStatus('Getting your location...');
+      setLocationStatus(t('gettingLocation'));
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setForm(prev => ({
@@ -27,15 +29,15 @@ export default function InputPage(){
             lat: position.coords.latitude.toFixed(6),
             lng: position.coords.longitude.toFixed(6)
           }));
-          setLocationStatus('Location detected ✓');
+          setLocationStatus(t('locationDetected'));
         },
         (error) => {
-          setLocationStatus('Please enter coordinates manually');
+          setLocationStatus(t('enterCoordinates'));
           console.error('Geolocation error:', error);
         }
       );
     } else {
-      setLocationStatus('Geolocation not supported. Please enter coordinates manually.');
+      setLocationStatus(t('geolocationNotSupported'));
     }
   }, []);
 
@@ -46,17 +48,17 @@ export default function InputPage(){
 
     // Validation
     if (!form.commodity) {
-      setErr('Please select a commodity');
+      setErr(t('selectCommodity'));
       setLoading(false);
       return;
     }
     if (!form.date) {
-      setErr('Please select a date');
+      setErr(t('selectDate'));
       setLoading(false);
       return;
     }
     if (!form.lat || !form.lng) {
-      setErr('Please provide latitude and longitude coordinates');
+      setErr(t('provideCoordinates'));
       setLoading(false);
       return;
     }
@@ -65,13 +67,13 @@ export default function InputPage(){
     const lng = parseFloat(form.lng);
 
     if (isNaN(lat) || isNaN(lng)) {
-      setErr('Invalid latitude/longitude coordinates');
+      setErr(t('invalidCoordinates'));
       setLoading(false);
       return;
     }
 
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      setErr('Latitude must be between -90 and 90, Longitude between -180 and 180');
+      setErr(t('coordinateRange'));
       setLoading(false);
       return;
     }
@@ -99,7 +101,7 @@ export default function InputPage(){
   return (
     <div className="form card">
       <BackButton />
-      <h2>Input Produce Details</h2>
+      <h2>{t('inputTitle')}</h2>
       {err && <div className="card" style={{color: 'red'}}>{err}</div>}
       {locationStatus && (
         <div className="card" style={{fontSize: '0.9em', color: locationStatus.includes('✓') ? 'green' : '#666'}}>
@@ -108,35 +110,35 @@ export default function InputPage(){
       )}
       <form onSubmit={submit}>
         <label>
-          Commodity:
+          {t('commodity') + ':'}
           <select 
             value={form.commodity} 
             onChange={e=>setForm({...form,commodity:e.target.value})}
             required
           >
-            <option value="Rice">Rice</option>
-            <option value="Banana">Banana</option>
-            <option value="Cotton">Cotton</option>
-            <option value="Tomato">Tomato</option>
-            <option value="Potato">Potato</option>
-            <option value="Groundnut">Groundnut</option>
-            <option value="Maize">Maize</option>
-            <option value="Mango">Mango</option>
-            <option value="Turmeric">Turmeric</option>
-            <option value="Wheat">Wheat</option>
-            <option value="Onion">Onion</option>
-            <option value="Green Chilli">Green Chilli</option>
-            <option value="Brinjal">Brinjal</option>
-            <option value="Papaya">Papaya</option>
-            <option value="Jowar">Jowar (Sorghum)</option>
-            <option value="Arhar">Arhar (Tur/Red Gram)</option>
-            <option value="Bajra">Bajra (Pearl Millet)</option>
-            <option value="Black Gram Dal">Black Gram Dal (Urd Dal)</option>
+            <option value="Rice">{t('Rice')}</option>
+            <option value="Banana">{t('Banana')}</option>
+            <option value="Cotton">{t('Cotton')}</option>
+            <option value="Tomato">{t('Tomato')}</option>
+            <option value="Potato">{t('Potato')}</option>
+            <option value="Groundnut">{t('Groundnut')}</option>
+            <option value="Maize">{t('Maize')}</option>
+            <option value="Mango">{t('Mango')}</option>
+            <option value="Turmeric">{t('Turmeric')}</option>
+            <option value="Wheat">{t('Wheat')}</option>
+            <option value="Onion">{t('Onion')}</option>
+            <option value="Green Chilli">{t('Green Chilli')}</option>
+            <option value="Brinjal">{t('Brinjal')}</option>
+            <option value="Papaya">{t('Papaya')}</option>
+            <option value="Jowar">{t('Jowar')}</option>
+            <option value="Arhar">{t('Arhar')}</option>
+            <option value="Bajra">{t('Bajra')}</option>
+            <option value="Black Gram Dal">{t('Black Gram Dal')}</option>
           </select>
         </label>
         
         <label>
-          Date:
+          {t('date') + ':'}
           <input 
             type="date" 
             value={form.date} 
@@ -146,7 +148,7 @@ export default function InputPage(){
         </label>
 
         <label>
-          Quantity (Quintal):
+          {t('quantityLabel') + ':'}
           <input 
             type="number" 
             placeholder="10" 
@@ -160,7 +162,7 @@ export default function InputPage(){
 
         <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
           <label style={{flex: 1, minWidth: '150px'}}>
-            Latitude:
+            {t('latitude') + ':'}
             <input 
               type="number" 
               step="0.000001"
@@ -171,7 +173,7 @@ export default function InputPage(){
             />
           </label>
           <label style={{flex: 1, minWidth: '150px'}}>
-            Longitude:
+            {t('longitude') + ':'}
             <input 
               type="number" 
               step="0.000001"
@@ -184,11 +186,11 @@ export default function InputPage(){
         </div>
 
         <small style={{color: '#666', display: 'block', marginTop: '-10px', marginBottom: '10px'}}>
-          Your coordinates will be used to calculate distance to mandis
+          {t('coordinatesHelp')}
         </small>
 
         <button type="submit" disabled={loading}>
-          {loading ? 'Predicting...' : 'Predict & Recommend'}
+          {loading ? t('predicting') : t('predictButton')}
         </button>
       </form>
     </div>

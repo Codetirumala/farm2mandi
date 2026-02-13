@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Welcome2(){
+  const { t } = useLanguage();
   return (
     <div>
       <BackButton />
-      <h2>Welcome</h2>
-      <p>Proceed to input produce details and get mandi recommendations.</p>
-      <p><Link to="/input">Go to Input Page</Link></p>
+      <h2>{t('welcome')}</h2>
+      <p>{t('farm2mandiDesc')}</p>
+      <p><Link to="/input">{t('goToInput')}</Link></p>
     </div>
   );
 }

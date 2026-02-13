@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Box,
   Container,
@@ -34,6 +35,7 @@ import { getProfile } from '../api';
 
 export default function Transport() {
   const location = useLocation();
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     fromMandal: '',
     toMandal: '',
@@ -74,7 +76,7 @@ export default function Transport() {
 
   function getFarmerLocation() {
     if (navigator.geolocation) {
-      setLocationStatus('Getting your location...');
+      setLocationStatus(t('gettingLocation'));
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setForm(prev => ({
@@ -82,10 +84,10 @@ export default function Transport() {
             farmerLat: position.coords.latitude,
             farmerLng: position.coords.longitude
           }));
-          setLocationStatus('Location detected ✓');
+          setLocationStatus(t('locationDetected'));
         },
         (error) => {
-          setLocationStatus('Location access denied. Enter coordinates manually.');
+          setLocationStatus(t('locationAccessDenied'));
           console.error('Geolocation error:', error);
         },
         {
@@ -95,7 +97,7 @@ export default function Transport() {
         }
       );
     } else {
-      setLocationStatus('Geolocation not supported. Enter coordinates manually.');
+      setLocationStatus(t('geolocationNotSupported'));
     }
   }
 
@@ -137,9 +139,9 @@ export default function Transport() {
       const data = await findDrivers(searchData);
       setDrivers(data.availableDrivers || []);
       if (data.availableDrivers.length === 0) {
-        setError('No drivers available matching your criteria. Try adjusting quantity or mandal.');
+        setError(t('noDriversFound'));
       } else {
-        setSuccess(`Found ${data.availableDrivers.length} driver(s) matching your requirements.`);
+        setSuccess(t('foundDrivers', { count: data.availableDrivers.length }));
       }
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Failed to find drivers');
@@ -215,13 +217,13 @@ export default function Transport() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h4" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
               <DirectionsTransitIcon color="primary" />
-              Transport Booking
+              {t('transportBooking')}
             </Typography>
             <Button
               variant={showBookings ? 'contained' : 'outlined'}
               onClick={() => setShowBookings(!showBookings)}
             >
-              {showBookings ? 'Hide' : 'View'} My Bookings
+              {showBookings ? t('hideMyBookings') : t('viewMyBookings')}
             </Button>
           </Box>
 
@@ -233,11 +235,11 @@ export default function Transport() {
             <Card sx={{ mb: 3, backgroundColor: '#f9f9f9' }}>
               <CardContent>
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                  My Bookings
+                  {t('myBookings')}
                 </Typography>
                 {bookings.length === 0 ? (
                   <Typography variant="body2" color="text.secondary">
-                    No bookings yet. Create a booking below.
+                    {t('noBookingsYet')}
                   </Typography>
                 ) : (
                   <Grid container spacing={2}>
@@ -262,32 +264,32 @@ export default function Transport() {
                             <Grid container spacing={2}>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>From:</strong> {booking.fromMandi}
+                                  <strong>{t('from')}:</strong> {booking.fromMandi}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>To:</strong> {booking.toMandi}
+                                  <strong>{t('to')}:</strong> {booking.toMandi}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>Crop:</strong> {booking.cropType}
+                                  <strong>{t('crop')}:</strong> {booking.cropType}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>Quantity:</strong> {booking.quantityKg} kg
+                                  <strong>{t('quantity')}:</strong> {booking.quantityKg} kg
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>Estimated Cost:</strong> ₹{booking.estimatedCost}
+                                  <strong>{t('estimatedCost')}:</strong> ₹{booking.estimatedCost}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12} sm={6}>
                                 <Typography variant="body2">
-                                  <strong>Distance:</strong> {booking.distanceKm} km
+                                  <strong>{t('distance')}:</strong> {booking.distanceKm} km
                                 </Typography>
                               </Grid>
                               {booking.driver?.phone && (
@@ -297,7 +299,7 @@ export default function Transport() {
                                     startIcon={<PhoneIcon />}
                                     href={`tel:${booking.driver.phone}`}
                                   >
-                                    Call Driver: {booking.driver.phone}
+                                    {t('callDriver')}: {booking.driver.phone}
                                   </Button>
                                 </Grid>
                               )}
@@ -316,13 +318,13 @@ export default function Transport() {
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Find Available Drivers
+                {t('findAvailableDrivers')}
               </Typography>
               <Box component="form" onSubmit={handleSearch}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="From Mandal"
+                      label={t('fromMandal')}
                       value={form.fromMandal}
                       onChange={(e) => setForm({ ...form, fromMandal: e.target.value })}
                       fullWidth
@@ -332,7 +334,7 @@ export default function Transport() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="To Mandal"
+                      label={t('toMandal')}
                       value={form.toMandal}
                       onChange={(e) => setForm({ ...form, toMandal: e.target.value })}
                       fullWidth
@@ -342,7 +344,7 @@ export default function Transport() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Quantity (kg)"
+                      label={t('quantityKg')}
                       type="number"
                       value={form.quantityKg}
                       onChange={(e) => setForm({ ...form, quantityKg: e.target.value })}
@@ -353,7 +355,7 @@ export default function Transport() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Crop Type"
+                      label={t('cropType')}
                       value={form.cropType}
                       onChange={(e) => setForm({ ...form, cropType: e.target.value })}
                       fullWidth
@@ -365,25 +367,25 @@ export default function Transport() {
                   <Grid item xs={12}>
                     <Divider sx={{ my: 1 }} />
                     <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                      Location Coordinates (Optional - for accurate route calculation)
+                      {t('locationCoordinates')}
                     </Typography>
                   </Grid>
                   
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Your Latitude"
+                      label={t('yourLatitude')}
                       type="number"
                       value={form.farmerLat}
                       onChange={(e) => setForm({ ...form, farmerLat: e.target.value })}
                       fullWidth
                       size="small"
                       inputProps={{ step: '0.000001' }}
-                      helperText={locationStatus || 'Auto-detected from GPS'}
+                      helperText={locationStatus || t('autoDetectedGPS')}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Your Longitude"
+                      label={t('yourLongitude')}
                       type="number"
                       value={form.farmerLng}
                       onChange={(e) => setForm({ ...form, farmerLng: e.target.value })}
@@ -394,19 +396,19 @@ export default function Transport() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Destination Latitude"
+                      label={t('destLatitude')}
                       type="number"
                       value={form.toLat}
                       onChange={(e) => setForm({ ...form, toLat: e.target.value })}
                       fullWidth
                       size="small"
                       inputProps={{ step: '0.000001' }}
-                      helperText="Mandi/destination coordinates"
+                      helperText={t('mandiDestCoords')}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      label="Destination Longitude"
+                      label={t('destLongitude')}
                       type="number"
                       value={form.toLng}
                       onChange={(e) => setForm({ ...form, toLng: e.target.value })}
@@ -423,7 +425,7 @@ export default function Transport() {
                       onClick={getFarmerLocation}
                       sx={{ mb: 1 }}
                     >
-                      Refresh My Location
+                      {t('refreshMyLocation')}
                     </Button>
                   </Grid>
                   
@@ -436,7 +438,7 @@ export default function Transport() {
                       disabled={loading}
                       sx={{ py: 1.5 }}
                     >
-                      {loading ? <CircularProgress size={20} color="inherit" /> : 'Search Drivers'}
+                      {loading ? <CircularProgress size={20} color="inherit" /> : t('searchDrivers')}
                     </Button>
                   </Grid>
                 </Grid>
@@ -448,11 +450,10 @@ export default function Transport() {
           {drivers.length > 0 && (
             <Alert severity="info" sx={{ mb: 2 }}>
               <Typography variant="body2">
-                <strong>Route Calculation:</strong> The system calculates the total route distance from the driver's current location → your pickup point → destination mandi. 
-                Drivers are sorted by proximity to you, then by rating and cost. 
+                <strong>{t('routeCalculation')}:</strong> {t('routeCalcDesc')}{' '}
                 {form.farmerLat && form.farmerLng && form.toLat && form.toLng 
-                  ? ' Using your provided coordinates for accurate calculation.' 
-                  : ' Provide coordinates above for more accurate distance and cost estimates.'}
+                  ? t('usingCoordinates') 
+                  : t('provideCoordinatesForBetter')}
               </Typography>
             </Alert>
           )}
@@ -461,7 +462,7 @@ export default function Transport() {
           {drivers.length > 0 && (
             <Box>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Available Drivers ({drivers.length})
+                {t('availableDrivers')} ({drivers.length})
               </Typography>
               <Grid container spacing={2}>
                 {drivers.map((driver) => (
@@ -487,7 +488,7 @@ export default function Transport() {
                         <Grid container spacing={1} sx={{ mb: 2 }}>
                           <Grid item xs={6}>
                             <Typography variant="body2" color="text.secondary">
-                              Vehicle Type
+                              {t('vehicleType')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                               {driver.vehicleType}
@@ -495,7 +496,7 @@ export default function Transport() {
                           </Grid>
                           <Grid item xs={6}>
                             <Typography variant="body2" color="text.secondary">
-                              Vehicle Number
+                              {t('vehicleNumber')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                               {driver.vehicleNumber}
@@ -503,7 +504,7 @@ export default function Transport() {
                           </Grid>
                           <Grid item xs={6}>
                             <Typography variant="body2" color="text.secondary">
-                              Capacity
+                              {t('capacity')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                               {driver.vehicleCapacityKg} kg
@@ -511,7 +512,7 @@ export default function Transport() {
                           </Grid>
                           <Grid item xs={6}>
                             <Typography variant="body2" color="text.secondary">
-                              Cost per km
+                              {t('costPerKm')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                               ₹{driver.costPerKm}
@@ -519,7 +520,7 @@ export default function Transport() {
                           </Grid>
                           <Grid item xs={12}>
                             <Typography variant="body2" color="text.secondary">
-                              Current Location
+                              {t('currentLocation')}
                             </Typography>
                             <Typography variant="body2">
                               {driver.locationName || driver.currentMandal}
@@ -536,7 +537,7 @@ export default function Transport() {
 
                         <Box sx={{ mb: 2 }}>
                           <Typography variant="body2" color="text.secondary">
-                            Estimated Cost
+                            {t('estimatedCost')}
                           </Typography>
                           <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
                             ₹{driver.estimatedCost}
@@ -553,7 +554,7 @@ export default function Transport() {
                           onClick={() => handleBookDriver(driver)}
                           startIcon={<CheckCircleIcon />}
                         >
-                          Book This Driver
+                          {t('bookThisDriver')}
                         </Button>
                       </CardContent>
                     </Card>
@@ -567,28 +568,28 @@ export default function Transport() {
 
       {/* Booking Confirmation Dialog */}
       <Dialog open={bookingDialogOpen} onClose={() => setBookingDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Confirm Booking</DialogTitle>
+        <DialogTitle>{t('confirmBookingTitle')}</DialogTitle>
         <DialogContent>
           {selectedDriver && (
             <Box>
               <Typography variant="body1" sx={{ mb: 2 }}>
-                Are you sure you want to book <strong>{selectedDriver.name}</strong>?
+                {t('areYouSureBook')} <strong>{selectedDriver.name}</strong>?
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">From</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('from')}</Typography>
                   <Typography variant="body1">{form.fromMandal}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">To</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('to')}</Typography>
                   <Typography variant="body1">{form.toMandal}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">Quantity</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('quantity')}</Typography>
                   <Typography variant="body1">{form.quantityKg} kg</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">Estimated Cost</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('estimatedCost')}</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>₹{selectedDriver.estimatedCost}</Typography>
                 </Grid>
               </Grid>
@@ -597,7 +598,7 @@ export default function Transport() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setBookingDialogOpen(false)} disabled={bookingLoading}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             onClick={confirmBooking}
@@ -605,7 +606,7 @@ export default function Transport() {
             disabled={bookingLoading}
             startIcon={bookingLoading ? <CircularProgress size={16} /> : <CheckCircleIcon />}
           >
-            {bookingLoading ? 'Booking...' : 'Confirm Booking'}
+            {bookingLoading ? t('booking') : t('confirmBooking')}
           </Button>
         </DialogActions>
       </Dialog>

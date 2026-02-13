@@ -1,0 +1,60 @@
+<!--
+  Open this file in a browser, then right-click each canvas to "Save image as" 
+  to create PNG icons. Or use the script below to auto-generate them.
+-->
+<!DOCTYPE html>
+<html>
+<head><title>Generate Farm2Mandi Icons</title></head>
+<body>
+<script>
+const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+sizes.forEach(size => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  // Green background
+  ctx.fillStyle = '#2e7d32';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, size * 0.15);
+  ctx.fill();
+
+  // White leaf icon
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = size * 0.3;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy - r * 0.1, r * 0.6, r, -Math.PI / 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Stem
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = size * 0.04;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + r * 0.5);
+  ctx.quadraticCurveTo(cx + r * 0.3, cy, cx + r * 0.1, cy - r * 0.6);
+  ctx.stroke();
+
+  // Text
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `bold ${size * 0.13}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.fillText('F2M', cx, cy + r * 1.1);
+
+  // Download link
+  const link = document.createElement('a');
+  link.download = `icon-${size}x${size}.png`;
+  link.href = canvas.toDataURL();
+  link.textContent = `Download ${size}x${size}`;
+  link.style.display = 'block';
+  link.style.margin = '10px';
+  document.body.appendChild(canvas);
+  document.body.appendChild(link);
+});
+</script>
+</body>
+</html>

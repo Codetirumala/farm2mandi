@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Box, Button, Container, Paper, TextField, Typography, Alert } from '@mui/material';
 import { forgotOtp, resetWithOtp } from '../api';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Forgot(){
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState('');
   const [otp, setOtp] = useState('');
@@ -48,25 +50,25 @@ export default function Forgot(){
       <Container maxWidth="sm">
         <BackButton />
         <Paper sx={{ p:4 }} elevation={8}>
-          <Typography variant="h5" sx={{ mb:2 }}>Forgot password</Typography>
+          <Typography variant="h5" sx={{ mb:2 }}>{t('forgotTitle')}</Typography>
 
           {msg && <Alert severity="info" sx={{ mb:2 }}>{msg}</Alert>}
 
           {stage === 'send' ? (
             <Box component="form" onSubmit={sendOtp} sx={{ display:'grid', gap:2 }}>
-              <TextField label="Email" value={email} onChange={e=>setEmail(e.target.value)} required fullWidth />
+              <TextField label={t('emailLabel')} value={email} onChange={e=>setEmail(e.target.value)} required fullWidth />
               <Box sx={{ display:'flex', justifyContent:'flex-end' }}>
-                <Button type="submit" variant="contained" disabled={loading}>{loading ? 'Sending...' : 'Send OTP'}</Button>
+                <Button type="submit" variant="contained" disabled={loading}>{loading ? t('sending') : t('sendOtp')}</Button>
               </Box>
             </Box>
           ) : (
             <Box component="form" onSubmit={verify} sx={{ display:'grid', gap:2 }}>
-              <TextField label="Email" value={email} onChange={e=>setEmail(e.target.value)} required fullWidth />
-              <TextField label="OTP" value={otp} onChange={e=>setOtp(e.target.value)} fullWidth />
-              <TextField label="New password" type="password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} fullWidth required />
+              <TextField label={t('emailLabel')} value={email} onChange={e=>setEmail(e.target.value)} required fullWidth />
+              <TextField label={t('otp')} value={otp} onChange={e=>setOtp(e.target.value)} fullWidth />
+              <TextField label={t('newPassword')} type="password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} fullWidth required />
               <Box sx={{ display:'flex', justifyContent:'space-between' }}>
-                <Button variant="text" onClick={()=>setStage('send')}>Back</Button>
-                <Button type="submit" variant="contained" disabled={loading}>{loading ? 'Resetting...' : 'Reset password'}</Button>
+                <Button variant="text" onClick={()=>setStage('send')}>{t('back')}</Button>
+                <Button type="submit" variant="contained" disabled={loading}>{loading ? t('resetting') : t('resetPassword')}</Button>
               </Box>
             </Box>
           )}

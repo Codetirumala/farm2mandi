@@ -19,6 +19,8 @@ import DriverLocation from './pages/DriverLocation';
 import Footer from './components/Footer';
 import NavBar from './components/NavBar';
 import RequireAuth from './components/RequireAuth';
+import { LanguageProvider } from './context/LanguageContext';
+import InstallPrompt from './components/InstallPrompt';
 
 import Loader from './components/Loader';
 
@@ -33,6 +35,7 @@ export default function App() {
   if (loading) return <Loader />;
 
   return (
+    <LanguageProvider>
     <div className="app">
       <NavBar />
       <main>
@@ -56,6 +59,8 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <InstallPrompt />
     </div>
+    </LanguageProvider>
   );
 }

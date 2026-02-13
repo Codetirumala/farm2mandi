@@ -19,8 +19,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import UpdateIcon from '@mui/icons-material/Update';
 import { updateDriverLocation, getMyLocation } from '../api';
 import { getProfile } from '../api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function DriverLocation() {
+  const { t } = useLanguage();
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [autoUpdate, setAutoUpdate] = useState(false);
@@ -184,7 +186,7 @@ export default function DriverLocation() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h4" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
               <LocationOnIcon color="primary" />
-              Location Tracking
+              {t('locationTracking')}
             </Typography>
             {driverStatus && (
               <Chip 
@@ -202,7 +204,7 @@ export default function DriverLocation() {
           <Card sx={{ mb: 3, backgroundColor: '#f9f9f9' }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Current Location
+                {t('currentLocationTitle')}
               </Typography>
               
               {location && location.latitude ? (
@@ -214,23 +216,23 @@ export default function DriverLocation() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="text.secondary">
-                      <strong>Latitude:</strong> {location.latitude.toFixed(6)}
+                      <strong>{t('latitude')}:</strong> {location.latitude.toFixed(6)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="text.secondary">
-                      <strong>Longitude:</strong> {location.longitude.toFixed(6)}
+                      <strong>{t('longitude')}:</strong> {location.longitude.toFixed(6)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="body2" color="text.secondary">
-                      <strong>Last Updated:</strong> {formatTimeAgo(location.lastUpdate)}
+                      <strong>{t('lastUpdated')}:</strong> {formatTimeAgo(location.lastUpdate)}
                     </Typography>
                   </Grid>
                 </Grid>
               ) : (
                 <Typography variant="body2" color="text.secondary">
-                  No location data available. Click "Update Location" to get started.
+                  {t('noLocationData')}
                 </Typography>
               )}
             </CardContent>
@@ -249,7 +251,7 @@ export default function DriverLocation() {
                   fullWidth
                   sx={{ py: 1.5 }}
                 >
-                  {loading ? <CircularProgress size={20} color="inherit" /> : 'Update Location'}
+                  {loading ? <CircularProgress size={20} color="inherit" /> : t('updateLocation')}
                 </Button>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -264,12 +266,12 @@ export default function DriverLocation() {
                   label={
                     <Box>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        Auto Update
+                        {t('autoUpdate')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {driverStatus === 'OnTrip' 
-                          ? 'Updates every 5 seconds' 
-                          : 'Updates every 60 seconds'}
+                          ? t('updatesEvery5s') 
+                          : t('updatesEvery60s')}
                       </Typography>
                     </Box>
                   }
@@ -281,17 +283,17 @@ export default function DriverLocation() {
           {/* Info Box */}
           <Alert severity="info" sx={{ mt: 3 }}>
             <Typography variant="body2">
-              <strong>How it works:</strong>
+              <strong>{t('howItWorksDriver')}</strong>
               <br />
-              • Click "Update Location" to manually update your current location
+              • {t('driverLocationHelp1')}
               <br />
-              • Enable "Auto Update" for automatic location tracking
+              • {t('driverLocationHelp2')}
               <br />
-              • When your status is <strong>"OnTrip"</strong>, location updates every <strong>5 seconds</strong>
+              • {t('driverLocationHelp3')}
               <br />
-              • When your status is <strong>"Idle"</strong> or <strong>"Assigned"</strong>, location updates every <strong>60 seconds</strong>
+              • {t('driverLocationHelp4')}
               <br />
-              • Your exact location name is automatically detected using GPS coordinates
+              • {t('driverLocationHelp5')}
             </Typography>
           </Alert>
         </Paper>

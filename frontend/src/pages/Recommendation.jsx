@@ -20,16 +20,18 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import MapIcon from '@mui/icons-material/Map';
 import DirectionsTransitIcon from '@mui/icons-material/DirectionsTransit';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Recommendation(){
   const data = JSON.parse(localStorage.getItem('lastPrediction') || 'null');
+  const { t } = useLanguage();
   
   if (!data) {
     return (
       <Container maxWidth="md" sx={{ py: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <Paper sx={{ p: 4, textAlign: 'center', bgcolor: '#f1f8f4', borderRadius: 3 }}>
           <Typography variant="h6" color="text.secondary">
-            No recommendation data. Try Input page.
+            {t('noRecommendationData')}
           </Typography>
         </Paper>
       </Container>
@@ -61,10 +63,10 @@ export default function Recommendation(){
               fontSize: { xs: '2rem', md: '2.5rem' }
             }}
           >
-            Market Recommendations
+            {t('marketRecommendations')}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Best markets in Andhra Pradesh for your produce
+            {t('bestMarkets')}
           </Typography>
         </Box>
 
@@ -84,20 +86,20 @@ export default function Recommendation(){
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">Commodity</Typography>
+                <Typography variant="body2" color="text.secondary">{t('commodity')}</Typography>
                 <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
                   {result.commodity || data.input?.commodity}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">Predicted Price</Typography>
+                <Typography variant="body2" color="text.secondary">{t('predictedPrice')}</Typography>
                 <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
                   ₹{result.predictedPrice}/Quintal
                 </Typography>
               </Grid>
               {result.quantity && (
                 <Grid item xs={12} sm={4}>
-                  <Typography variant="body2" color="text.secondary">Quantity</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('quantity')}</Typography>
                   <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
                     {result.quantity} Quintal
                   </Typography>
@@ -111,7 +113,7 @@ export default function Recommendation(){
                     <Divider sx={{ my: 1 }} />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" color="text.secondary">Prediction Method</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('predictionMethod')}</Typography>
                     <Chip 
                       label={result.predictionInfo.method || 'ML Model'} 
                       color={result.predictionInfo.method === 'ML Model' ? 'success' : 'default'}
@@ -120,7 +122,7 @@ export default function Recommendation(){
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" color="text.secondary">Confidence</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('confidence')}</Typography>
                     <Typography variant="body1" sx={{ 
                       color: result.predictionInfo.confidence > 0.7 ? '#2e7d32' : '#f57c00',
                       fontWeight: 600
@@ -133,7 +135,7 @@ export default function Recommendation(){
                   </Grid>
                   {result.predictionInfo.modelUsed && (
                     <Grid item xs={12}>
-                      <Typography variant="body2" color="text.secondary">ML Model</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('mlModel')}</Typography>
                       <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500 }}>
                         {result.predictionInfo.modelUsed}
                       </Typography>
@@ -146,7 +148,7 @@ export default function Recommendation(){
                 <Grid item xs={12}>
                   <Divider sx={{ my: 1 }} />
                   <Typography variant="body2" color="text.secondary">
-                    Total Markets Found: <strong style={{ color: '#2e7d32' }}>{result.allMandisCount || mandis.length}</strong>
+                    {t('totalMarketsFound')}: <strong style={{ color: '#2e7d32' }}>{result.allMandisCount || mandis.length}</strong>
                   </Typography>
                 </Grid>
               )}
@@ -168,23 +170,23 @@ export default function Recommendation(){
             }}
           >
             <Typography variant="h5" sx={{ color: '#f57c00', mb: 2, fontWeight: 600 }}>
-              🔍 No Markets Found
+              {'🔍 ' + t('noMarketsFound')}
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-              No markets found for {result.commodity || data.input?.commodity} in Andhra Pradesh.
+              {t('noMarketsDesc', { commodity: result.commodity || data.input?.commodity })}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              This could be because:
+              {t('noMarketsReasons')}
             </Typography>
             <Box sx={{ textAlign: 'left', mb: 3, maxWidth: '400px', mx: 'auto' }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                • Markets for this commodity are not yet registered in our database
+                • {t('reason1')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                • Try selecting a different commodity from the dropdown
+                • {t('reason2')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                • Check back later as we're constantly adding new markets
+                • {t('reason3')}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -194,7 +196,7 @@ export default function Recommendation(){
                 variant="contained" 
                 sx={{ bgcolor: '#4caf50', '&:hover': { bgcolor: '#45a049' } }}
               >
-                Try Different Commodity
+                {t('tryAgain')}
               </Button>
               <Button 
                 component={Link} 
@@ -202,7 +204,7 @@ export default function Recommendation(){
                 variant="outlined"
                 sx={{ borderColor: '#4caf50', color: '#2e7d32' }}
               >
-                Browse All Markets
+                {t('browseAllMarkets')}
               </Button>
             </Box>
           </Paper>
@@ -236,7 +238,7 @@ export default function Recommendation(){
                     >
                       <Chip
                         icon={<EmojiEventsIcon />}
-                        label="BEST CHOICE"
+                        label={t('bestChoice')}
                         sx={{
                           bgcolor: '#4caf50',
                           color: 'white',
@@ -278,7 +280,7 @@ export default function Recommendation(){
                         <Box sx={{ textAlign: 'center' }}>
                           <LocalShippingIcon sx={{ color: '#4caf50', fontSize: 32, mb: 1 }} />
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            Distance
+                            {t('distance')}
                           </Typography>
                           <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
                             {m.distance_km} km
@@ -290,7 +292,7 @@ export default function Recommendation(){
                         <Box sx={{ textAlign: 'center' }}>
                           <TrendingUpIcon sx={{ color: '#4caf50', fontSize: 32, mb: 1 }} />
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            Price/kg
+                            {t('pricePerKg')}
                           </Typography>
                           <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
                             ₹{m.predicted_price}
@@ -302,7 +304,7 @@ export default function Recommendation(){
                         <Box sx={{ textAlign: 'center' }}>
                           <DirectionsTransitIcon sx={{ color: '#ff9800', fontSize: 32, mb: 1 }} />
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            Transport
+                            {t('transport')}
                           </Typography>
                           <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 600 }}>
                             ₹{m.transport_cost}
@@ -314,7 +316,7 @@ export default function Recommendation(){
                         <Box sx={{ textAlign: 'center' }}>
                           <AttachMoneyIcon sx={{ color: idx === 0 ? '#4caf50' : '#66bb6a', fontSize: 32, mb: 1 }} />
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            Profit
+                            {t('profit')}
                           </Typography>
                           <Typography 
                             variant="h6" 
@@ -344,7 +346,7 @@ export default function Recommendation(){
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
                             <Typography variant="body2" color="text.secondary">
-                              <strong>Total Revenue:</strong> ₹{m.revenue} 
+                              <strong>{t('totalRevenue')}:</strong> ₹{m.revenue} 
                               <span style={{ color: '#666', fontSize: '0.9em' }}>
                                 {' '}(₹{m.predicted_price} × {result.quantity || 10} Quintal)
                               </span>
@@ -353,7 +355,7 @@ export default function Recommendation(){
                           {m.prediction_method && (
                             <Grid item xs={12}>
                               <Typography variant="body2" color="text.secondary">
-                                <strong>Prediction Method:</strong> 
+                                <strong>{t('predictionMethod')}:</strong> 
                                 <Chip 
                                   label={m.prediction_method} 
                                   size="small" 
@@ -386,7 +388,7 @@ export default function Recommendation(){
                           fontWeight: 600
                         }}
                       >
-                        View on Map
+                        {t('viewOnMap')}
                       </Button>
                       <Button
                         component={Link}
@@ -407,7 +409,7 @@ export default function Recommendation(){
                           fontWeight: 600
                         }}
                       >
-                        Transport Options
+                        {t('transportOptionsBtn')}
                       </Button>
                     </Box>
                   </CardContent>
@@ -431,13 +433,13 @@ export default function Recommendation(){
             }}
           >
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2, fontWeight: 600 }}>
-              Query Details
+              {t('queryDetails')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Typography variant="body2" color="text.secondary">
-              <strong>Commodity:</strong> {data.input.commodity || data.input.crop}<br/>
-              <strong>Date:</strong> {data.input.date}<br/>
-              <strong>Location:</strong> {data.input.lat && data.input.lng ? `${data.input.lat}, ${data.input.lng}` : data.input.location}
+              <strong>{t('commodity')}:</strong> {data.input.commodity || data.input.crop}<br/>
+              <strong>{t('date')}:</strong> {data.input.date}<br/>
+              <strong>{t('location')}:</strong> {data.input.lat && data.input.lng ? `${data.input.lat}, ${data.input.lng}` : data.input.location}
             </Typography>
           </Paper>
         )}

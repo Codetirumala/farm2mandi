@@ -15,12 +15,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import logo from './farm2mandi1.png';
-
-const pages = [
-  { label: 'Home', to: '/' },
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' }
-];
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function NavBar(){
   const theme = useTheme();
@@ -29,6 +25,13 @@ export default function NavBar(){
   const nav = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const isDriver = user && user.role === 'driver';
+  const { t } = useLanguage();
+
+  const pages = [
+    { label: t('home'), to: '/' },
+    { label: t('about'), to: '/about' },
+    { label: t('contact'), to: '/contact' }
+  ];
 
   function handleLogout(){
     import('../api').then(m=>m.logout()).catch(()=>{}).finally(()=>{
@@ -66,12 +69,12 @@ export default function NavBar(){
                     <>
                       <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/input'}>
-                          <ListItemText primary={'Input'} />
+                          <ListItemText primary={t('input')} />
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/transport'}>
-                          <ListItemText primary={'Transport'} />
+                          <ListItemText primary={t('transport')} />
                         </ListItemButton>
                       </ListItem>
                     </>
@@ -79,7 +82,7 @@ export default function NavBar(){
                   {user && isDriver && (
                     <ListItem disablePadding>
                       <ListItemButton component={RouterLink} to={'/driver-location'}>
-                        <ListItemText primary={'Location'} />
+                        <ListItemText primary={t('locationTracking')} />
                       </ListItemButton>
                     </ListItem>
                   )}
@@ -87,12 +90,12 @@ export default function NavBar(){
                     <>
                       <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/login'}>
-                          <ListItemText primary={'Login'} />
+                          <ListItemText primary={t('login')} />
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to={'/register'}>
-                          <ListItemText primary={'Register'} />
+                          <ListItemText primary={t('register')} />
                         </ListItemButton>
                       </ListItem>
                     </>
@@ -105,11 +108,16 @@ export default function NavBar(){
                       </ListItem>
                       <ListItem disablePadding>
                         <ListItemButton onClick={handleLogout}>
-                          <ListItemText primary={'Logout'} />
+                          <ListItemText primary={t('logout')} />
                         </ListItemButton>
                       </ListItem>
                     </>
                   )}
+                  <ListItem disablePadding sx={{ mt: 1 }}>
+                    <ListItemButton>
+                      <LanguageToggle compact />
+                    </ListItemButton>
+                  </ListItem>
                 </List>
               </Box>
             </Drawer>
@@ -121,13 +129,14 @@ export default function NavBar(){
             ))}
             {user && !isDriver && (
               <>
-                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/input'}>Input</Button>
-                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/transport'}>Transport</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/input'}>{t('input')}</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/transport'}>{t('transport')}</Button>
               </>
             )}
             {user && isDriver && (
-              <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/driver-location'}>Location</Button>
+              <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/driver-location'}>{t('locationTracking')}</Button>
             )}
+            <LanguageToggle compact />
             {user ? (
               <>
                 <Typography 
@@ -136,12 +145,12 @@ export default function NavBar(){
                 >
                   {user.name}
                 </Typography>
-                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} onClick={handleLogout}>Logout</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} onClick={handleLogout}>{t('logout')}</Button>
               </>
             ) : (
               <>
-                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/login'}>Login</Button>
-                <Button color="primary" variant="contained" component={RouterLink} to={'/register'} sx={{ ml:1 }}>Register</Button>
+                <Button sx={{ color: '#333', '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' } }} component={RouterLink} to={'/login'}>{t('login')}</Button>
+                <Button color="primary" variant="contained" component={RouterLink} to={'/register'} sx={{ ml:1 }}>{t('register')}</Button>
               </>
             )}
           </Box>

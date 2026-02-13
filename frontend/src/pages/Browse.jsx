@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Container, 
   Box, 
@@ -24,6 +25,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { getDistricts, getMarkets, getMarketDetails } from '../api';
 
 export default function Browse() {
+  const { t } = useLanguage();
   const [districts, setDistricts] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [markets, setMarkets] = useState([]);
@@ -126,10 +128,10 @@ export default function Browse() {
               fontSize: { xs: '2rem', md: '2.5rem' }
             }}
           >
-            Browse Markets in Andhra Pradesh
+            {t('browseTitle')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Explore districts and markets across Andhra Pradesh
+            {t('browseDesc')}
           </Typography>
         </Box>
 
@@ -146,11 +148,11 @@ export default function Browse() {
           <Grid container spacing={3} alignItems="center">
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth>
-                <InputLabel id="district-select-label">Select District</InputLabel>
+                <InputLabel id="district-select-label">{t('selectDistrict')}</InputLabel>
                 <Select
                   labelId="district-select-label"
                   value={selectedDistrict}
-                  label="Select District"
+                  label={t('selectDistrict')}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
                   sx={{
                     '& .MuiOutlinedInput-notchedOutline': {
@@ -165,7 +167,7 @@ export default function Browse() {
                   }}
                 >
                   <MenuItem value="">
-                    <em>All Districts</em>
+                    <em>{t('allDistricts')}</em>
                   </MenuItem>
                   {districts.map((district, idx) => (
                     <MenuItem key={idx} value={district}>
@@ -178,7 +180,7 @@ export default function Browse() {
             <Grid item xs={12} sm={6} md={8}>
               <TextField
                 fullWidth
-                placeholder="Search markets by name or district..."
+                placeholder={t('searchMarkets')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
@@ -233,13 +235,13 @@ export default function Browse() {
                 }}
                 sx={{ color: '#666' }}
               >
-                Close
+                {t('close')}
               </Button>
             </Box>
             <Divider sx={{ my: 2, bgcolor: '#c8e6c9' }} />
             <Box sx={{ mb: 3 }}>
               <Typography variant="h6" sx={{ color: '#2e7d32', mb: 2 }}>
-                Available Commodities
+                {t('availableCommodities')}
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {marketDetails.market.commodities.map((commodity, idx) => (
@@ -258,7 +260,7 @@ export default function Browse() {
             {marketDetails.latestPrices && marketDetails.latestPrices.length > 0 && (
               <Box>
                 <Typography variant="h6" sx={{ color: '#2e7d32', mb: 2 }}>
-                  Recent Prices
+                  {t('recentPrices')}
                 </Typography>
                 <Grid container spacing={2}>
                   {marketDetails.latestPrices.map((price, idx) => (
@@ -298,7 +300,7 @@ export default function Browse() {
           // Show markets for selected district
           <Box>
             <Typography variant="h5" sx={{ color: '#2e7d32', mb: 3, fontWeight: 600 }}>
-              Markets in {selectedDistrict} ({filteredMarkets.length})
+              {t('marketsIn')} {selectedDistrict} ({filteredMarkets.length})
             </Typography>
             <Grid container spacing={3}>
               {filteredMarkets.map((market, idx) => (
@@ -378,12 +380,12 @@ export default function Browse() {
           // Show markets grouped by district
           <Box>
             <Typography variant="h5" sx={{ color: '#2e7d32', mb: 3, fontWeight: 600 }}>
-              All Markets ({filteredMarkets.length})
+              {t('allMarkets')} ({filteredMarkets.length})
             </Typography>
             {Object.keys(filteredMarketsByDistrict).length === 0 ? (
               <Paper sx={{ p: 4, textAlign: 'center', bgcolor: '#ffffff' }}>
                 <Typography variant="body1" color="text.secondary">
-                  No markets found matching your search.
+                  {t('noMarketsMatchSearch')}
                 </Typography>
               </Paper>
             ) : (
@@ -399,7 +401,7 @@ export default function Browse() {
                       borderBottom: '2px solid #c8e6c9'
                     }}
                   >
-                    {district} ({filteredMarketsByDistrict[district].length} markets)
+                    {district} ({filteredMarketsByDistrict[district].length} {t('markets')})
                   </Typography>
                   <Grid container spacing={3}>
                     {filteredMarketsByDistrict[district].map((market, idx) => (

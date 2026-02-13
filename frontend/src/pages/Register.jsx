@@ -5,8 +5,10 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { register } from '../api';
 import { getProfile } from '../api';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Register() {
+  const { t } = useLanguage();
   const [role, setRole] = useState('farmer');
   const [form, setForm] = useState({ 
     name: '', 
@@ -111,8 +113,8 @@ export default function Register() {
                 </Avatar>
               </Grid>
               <Grid item xs>
-                <Typography variant="h5" sx={{ fontWeight:800 }}>Create account</Typography>
-                <Typography variant="body2" color="text.secondary">Sign up to get mandi recommendations and transport options</Typography>
+                <Typography variant="h5" sx={{ fontWeight:800 }}>{t('createNewAccount')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('registerDesc')}</Typography>
               </Grid>
             </Grid>
 
@@ -121,7 +123,7 @@ export default function Register() {
             <Box component="form" onSubmit={submit} sx={{ mt:3 }}>
               {/* Role Selection */}
               <Box sx={{ mb: 3 }}>
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>I am a:</Typography>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>{t('iAmA')}</Typography>
                 <ToggleButtonGroup
                   value={role}
                   exclusive
@@ -130,17 +132,17 @@ export default function Register() {
                   sx={{ mb: 2 }}
                 >
                   <ToggleButton value="farmer" sx={{ py: 1.5, fontWeight: 600 }}>
-                    Farmer
+                    {t('farmer')}
                   </ToggleButton>
                   <ToggleButton value="driver" sx={{ py: 1.5, fontWeight: 600 }}>
-                    Driver
+                    {t('driver')}
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Box>
 
               {/* Common Fields */}
               <TextField
-                label="Full name"
+                label={t('fullName')}
                 name="name"
                 value={form.name}
                 onChange={e=>setForm(f=>({ ...f, name:e.target.value }))}
@@ -150,7 +152,7 @@ export default function Register() {
               />
 
               <TextField
-                label="Email"
+                label={t('emailLabel')}
                 name="email"
                 value={form.email}
                 onChange={e=>setForm(f=>({ ...f, email:e.target.value }))}
@@ -161,7 +163,7 @@ export default function Register() {
               />
 
               <TextField
-                label="Password"
+                label={t('password')}
                 name="password"
                 value={form.password}
                 onChange={e=>setForm(f=>({ ...f, password:e.target.value }))}
@@ -172,7 +174,7 @@ export default function Register() {
               />
 
               <TextField
-                label="Phone"
+                label={t('phone')}
                 name="phone"
                 value={form.phone}
                 onChange={e=>setForm(f=>({ ...f, phone:e.target.value }))}
@@ -185,18 +187,18 @@ export default function Register() {
               {role === 'driver' && (
                 <>
                   <TextField
-                    label="Driver ID"
+                    label={t('driverId')}
                     name="driverId"
                     value={form.driverId}
                     onChange={e=>setForm(f=>({ ...f, driverId:e.target.value }))}
                     fullWidth
                     required
                     margin="normal"
-                    helperText="Unique identifier for driver"
+                    helperText={t('driverIdHelp')}
                   />
 
                   <FormControl fullWidth margin="normal" required>
-                    <InputLabel>Vehicle Type</InputLabel>
+                    <InputLabel>{t('vehicleType')}</InputLabel>
                     <Select
                       value={form.vehicleType}
                       onChange={e=>setForm(f=>({ ...f, vehicleType:e.target.value }))}
@@ -211,7 +213,7 @@ export default function Register() {
                   </FormControl>
 
                   <TextField
-                    label="Vehicle Number"
+                    label={t('vehicleNumber')}
                     name="vehicleNumber"
                     value={form.vehicleNumber}
                     onChange={e=>setForm(f=>({ ...f, vehicleNumber:e.target.value }))}
@@ -221,7 +223,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Vehicle Capacity (kg)"
+                    label={t('vehicleCapacity')}
                     name="vehicleCapacityKg"
                     value={form.vehicleCapacityKg}
                     onChange={e=>setForm(f=>({ ...f, vehicleCapacityKg:e.target.value }))}
@@ -232,18 +234,18 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Current Mandal"
+                    label={t('currentMandalLabel')}
                     name="currentMandal"
                     value={form.currentMandal}
                     onChange={e=>setForm(f=>({ ...f, currentMandal:e.target.value }))}
                     fullWidth
                     required
                     margin="normal"
-                    helperText="Your current location mandal"
+                    helperText={t('currentMandalHelp')}
                   />
 
                   <TextField
-                    label="Cost per Kilometer (₹)"
+                    label={t('costPerKmLabel')}
                     name="costPerKm"
                     value={form.costPerKm}
                     onChange={e=>setForm(f=>({ ...f, costPerKm:e.target.value }))}
@@ -259,7 +261,7 @@ export default function Register() {
               {role === 'farmer' && (
                 <>
                   <TextField
-                    label="Village"
+                    label={t('village')}
                     name="village"
                     value={form.village}
                     onChange={e=>setForm(f=>({ ...f, village:e.target.value }))}
@@ -268,7 +270,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="District"
+                    label={t('district')}
                     name="district"
                     value={form.district}
                     onChange={e=>setForm(f=>({ ...f, district:e.target.value }))}
@@ -277,7 +279,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="State"
+                    label={t('state')}
                     name="state"
                     value={form.state}
                     onChange={e=>setForm(f=>({ ...f, state:e.target.value }))}
@@ -286,7 +288,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Pincode"
+                    label={t('pincode')}
                     name="pincode"
                     value={form.pincode}
                     onChange={e=>setForm(f=>({ ...f, pincode:e.target.value }))}
@@ -295,7 +297,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Aadhar Number"
+                    label={t('aadhar')}
                     name="aadhar"
                     value={form.aadhar}
                     onChange={e=>setForm(f=>({ ...f, aadhar:e.target.value }))}
@@ -304,7 +306,7 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Farm Size (acres)"
+                    label={t('farmSize')}
                     name="farm_size"
                     value={form.farm_size}
                     onChange={e=>setForm(f=>({ ...f, farm_size:e.target.value }))}
@@ -314,24 +316,24 @@ export default function Register() {
                   />
 
                   <TextField
-                    label="Crops (comma-separated)"
+                    label={t('crops')}
                     name="crops"
                     value={form.crops}
                     onChange={e=>setForm(f=>({ ...f, crops:e.target.value }))}
                     fullWidth
                     margin="normal"
-                    helperText="e.g., Rice, Wheat, Cotton"
+                    helperText={t('cropsHelp')}
                   />
                 </>
               )}
 
               <Button type="submit" variant="contained" fullWidth sx={{ mt:3, py:1.5, backgroundColor:'#2e7d32', color:'#fff', fontWeight:700, textTransform:'uppercase' }} disabled={loading}>
-                {loading ? <CircularProgress size={20} color="inherit" /> : 'Create account'}
+                {loading ? <CircularProgress size={20} color="inherit" /> : t('signUp')}
               </Button>
             </Box>
 
             <Box sx={{ mt:3, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-              <Link component={RouterLink} to="/login" variant="body2" sx={{ color:'primary.main' }}>Already have an account? Sign in</Link>
+              <Link component={RouterLink} to="/login" variant="body2" sx={{ color:'primary.main' }}>{t('alreadyHaveAccount')}</Link>
             </Box>
           </Paper>
         </Container>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { track } from '../api';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Tracking(){
+  const { t } = useLanguage();
   const [id, setId] = useState('');
   const [timeline, setTimeline] = useState(null);
   const [err, setErr] = useState('');
@@ -20,10 +22,10 @@ export default function Tracking(){
   return (
     <div className="form card">
       <BackButton />
-      <h2>Track Vehicle</h2>
+      <h2>{t('trackVehicle')}</h2>
       <form onSubmit={submit}>
-        <input placeholder="Vehicle ID" value={id} onChange={e=>setId(e.target.value)} />
-        <button type="submit">Track</button>
+        <input placeholder={t('vehicleId')} value={id} onChange={e=>setId(e.target.value)} />
+        <button type="submit">{t('track')}</button>
       </form>
       {err && <div className="card">{err}</div>}
       {timeline && timeline.map((t,i)=> (

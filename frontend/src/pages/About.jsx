@@ -6,9 +6,11 @@ import MapIcon from '@mui/icons-material/Map';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import PeopleIcon from '@mui/icons-material/People';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function About(){
-  const statsInit = [ {label:'Avg price uplift', value:120}, {label:'Mandis indexed', value:500}, {label:'Transport partners', value:24} ];
+  const { t } = useLanguage();
+  const statsInit = [ {label:'Avg price uplift', value:120, key:'avgPriceUplift'}, {label:'Mandis indexed', value:500, key:'mandisIndexed'}, {label:'Transport partners', value:24, key:'transportPartners'} ];
   const [counts, setCounts] = useState(statsInit.map(()=>0));
 
   useEffect(()=>{
@@ -27,10 +29,10 @@ export default function About(){
   }, []);
 
   const features = [
-    { title: 'Accurate price forecasts', desc: 'LSTM-based time series models tuned for seasonal crops.', icon: <ShowChartIcon /> },
-    { title: 'Mandi ranking', desc: 'XGBoost-based ranking combining price, distance and demand.', icon: <MapIcon /> },
-    { title: 'Optimized logistics', desc: 'Compare truck capacities, share partial loads and reduce cost.', icon: <LocalShippingIcon /> },
-    { title: 'Farmer-first support', desc: 'Guides, local language help and cooperative integrations.', icon: <PeopleIcon /> }
+    { title: t('accurateForecasts'), desc: t('forecastDesc'), icon: <ShowChartIcon /> },
+    { title: t('mandiRanking'), desc: t('mandiRankingDesc'), icon: <MapIcon /> },
+    { title: t('optimizedLogistics'), desc: t('optimizedLogisticsDesc'), icon: <LocalShippingIcon /> },
+    { title: t('farmerFirstSupport'), desc: t('farmerFirstSupportDesc'), icon: <PeopleIcon /> }
   ];
 
   return (
@@ -50,30 +52,30 @@ export default function About(){
             <Grid item xs={12} md={7}>
               <Grow in={true} style={{ transformOrigin: '0 0 0' }} timeout={700}>
                 <Box>
-                  <Typography variant="h3" sx={{ fontWeight:800, mb:2, letterSpacing: -0.5 }}>About Farm2Mandi</Typography>
+                  <Typography variant="h3" sx={{ fontWeight:800, mb:2, letterSpacing: -0.5 }}>{t('aboutTitle')}</Typography>
                 </Box>
               </Grow>
 
               <Grow in={true} style={{ transformOrigin: '0 0 0' }} timeout={900}>
                 <Box>
                   <Typography variant="h6" sx={{ mb:3, color:'rgba(255,255,255,0.9)' }}>
-                    We help small and marginal farmers make better selling decisions by combining reliable price forecasts, mandi-level rankings and practical transport options — all in one, easy-to-use platform.
+                    {t('aboutDesc')}
                   </Typography>
                 </Box>
               </Grow>
 
               <Stack direction="row" spacing={2} sx={{ mt:3 }}>
-                <Button variant="contained" size="large" href="/input">Get recommendation</Button>
-                <Button variant="outlined" size="large" href="/contact" sx={{ color:'#fff', borderColor:'rgba(255,255,255,0.3)' }}>Contact sales</Button>
+                <Button variant="contained" size="large" href="/input">{t('getRecommendationBtn')}</Button>
+                <Button variant="outlined" size="large" href="/contact" sx={{ color:'#fff', borderColor:'rgba(255,255,255,0.3)' }}>{t('contactSales')}</Button>
               </Stack>
             </Grid>
 
             <Grid item xs={12} md={5}>
               <Card sx={{ bgcolor:'rgba(255,255,255,0.9)', color:'text.primary', boxShadow:6 }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight:700, mb:1 }}>Why farmers love it</Typography>
+                  <Typography variant="h6" sx={{ fontWeight:700, mb:1 }}>{t('whyFarmersLoveIt')}</Typography>
                   <Typography variant="body2" color="text.secondary" paragraph>
-                    Actionable recommendations with clear estimates of net profit after transport and fees, delivered in a concise view so farmers can decide quickly.
+                    {t('whyFarmersLoveItDesc')}
                   </Typography>
 
                   <Grid container spacing={1}>
@@ -98,7 +100,7 @@ export default function About(){
 
       {/* Features section */}
       <Container maxWidth="lg" sx={{ mt:6 }}>
-        <Typography variant="h4" sx={{ fontWeight:700, mb:3, textAlign:'center' }}>What we provide</Typography>
+        <Typography variant="h4" sx={{ fontWeight:700, mb:3, textAlign:'center' }}>{t('whatWeProvide')}</Typography>
         <Grid container spacing={3}>
           {features.map((f, i) => (
             <Grid item xs={12} sm={6} md={3} key={i}>
@@ -119,15 +121,15 @@ export default function About(){
       {/* How it works timeline */}
       <Box sx={{ py:8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h4" sx={{ fontWeight:700, mb:3, textAlign:'center' }}>How it works</Typography>
+          <Typography variant="h4" sx={{ fontWeight:700, mb:3, textAlign:'center' }}>{t('howItWorksAbout')}</Typography>
           <Grid container spacing={3} alignItems="center">
             <Grid item xs={12} md={6}>
               <Box sx={{ display:'flex', flexDirection:'column', gap:2 }}>
                 {[
-                  {title:'1. Tell us about your crop', text:'Crop, expected quantity and your village/location.'},
-                  {title:'2. We run forecasts', text:'LSTM time-series forecasts tuned per-crop and local market.'},
-                  {title:'3. Mandi ranking', text:'XGBoost ranks mandis by expected net profit after transport.'},
-                  {title:'4. Book transport & track', text:'Choose trucks, share partial loads and monitor ETAs.'}
+                  {title:t('tellUsAboutCrop'), text:t('tellUsAboutCropDesc')},
+                  {title:t('weRunForecasts'), text:t('weRunForecastsDesc')},
+                  {title:t('mandiRankingStep'), text:t('mandiRankingStepDesc')},
+                  {title:t('bookTransportTrack'), text:t('bookTransportTrackDesc')}
                 ].map((s, idx) => (
                   <Box key={idx} sx={{ display:'flex', gap:2, alignItems:'flex-start' }}>
                     <Chip label={s.title} color="primary" sx={{ minWidth:140, fontWeight:700 }} />
@@ -153,7 +155,7 @@ export default function About(){
             <Grid item xs={12} sm={4} key={i}>
               <Card sx={{ textAlign:'center', p:3 }}>
                 <Typography variant="h4" sx={{ fontWeight:800 }}>{counts[i]}{i===0?'%':''}</Typography>
-                <Typography variant="subtitle1" sx={{ fontWeight:700 }}>{s.label}</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight:700 }}>{t(s.key)}</Typography>
               </Card>
             </Grid>
           ))}
@@ -161,7 +163,7 @@ export default function About(){
       </Container>
 
       <Container maxWidth="lg" sx={{ mt:6 }}>
-        <Typography variant="body2" color="text.secondary" align="center">Farm2Mandi is built with farmers in mind — clear recommendations, transparent costs, and practical logistics to make selling produce fairer and simpler.</Typography>
+        <Typography variant="body2" color="text.secondary" align="center">{t('aboutFooter')}</Typography>
       </Container>
     </Box>
   );

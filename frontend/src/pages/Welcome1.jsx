@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Welcome1() {
+  const { t } = useLanguage();
   return (
     <div>
       <BackButton />
-      <h1>Farm2Mandi</h1>
-      <p>AI-driven mandi recommendation and transport assistance for farmers.</p>
+      <h1>{t('farm2mandiTitle')}</h1>
+      <p>{t('farm2mandiDesc')}</p>
       <p>
-        <Link to="/register">Register</Link> | <Link to="/login">Login</Link>
+        <Link to="/register">{t('register')}</Link> | <Link to="/login">{t('login')}</Link>
       </p>
     </div>
   );

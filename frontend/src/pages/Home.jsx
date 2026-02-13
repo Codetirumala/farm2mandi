@@ -10,6 +10,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import Rating from '@mui/material/Rating';
+import { useLanguage } from '../context/LanguageContext';
 // Using existing icons to avoid potential resolution issues with some icon names
 // (if you prefer these specific icons, ensure @mui/icons-material is installed and Vite restarted)
 
@@ -18,19 +19,20 @@ export default function Home(){
   const phrases = ['price signals', 'market demand', 'distance & transport', 'estimated net profit'];
   const [display, setDisplay] = useState('price signals');
   const [videoError, setVideoError] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let idx = 0;
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
       idx = (idx + 1) % phrases.length;
       setDisplay(phrases[idx]);
     }, 2500);
-    return () => clearInterval(t);
+    return () => clearInterval(timer);
   }, []);
 
   return (
     <div>
-      <BackButton />
+    
     
       {/* Hero with video loop in a small card and animated subtitle */}
       <Box sx={{ bgcolor: 'background.paper', py: { xs:6, md:12 } }}>
@@ -38,21 +40,21 @@ export default function Home(){
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={7}>
               <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, lineHeight:1.05 }}>
-                Farm2Mandi
+                {t('heroTitle')}
                 <Typography component="span" color="primary.main" sx={{ display:'block', fontSize:20, mt:1, fontWeight:600 }}>
-                  AI-driven mandi recommendations & transport
+                  {t('heroSubtitle')}
                 </Typography>
               </Typography>
 
               <Typography variant="h6" color="text.secondary" paragraph sx={{ minHeight:56 }}>
-                Predict {""}
+                {t('predict')} {""}
                 <Box component="span" sx={{ color:'primary.main', fontWeight:700 }}>{display}</Box>
-                {" "}- and get mandi suggestions with transport and profit estimates.
+                {" "}{t('andGetMandiSuggestions')}
               </Typography>
 
               <Box sx={{ mt:3, display:'flex', gap:2 }}>
-                <Button href="/input" variant="contained" size="large">Get Recommendation</Button>
-                <Button href="/about" variant="outlined" size="large">Learn more</Button>
+                <Button href="/input" variant="contained" size="large">{t('getRecommendation')}</Button>
+                <Button href="/about" variant="outlined" size="large">{t('learnMore')}</Button>
               </Box>
             </Grid>
 
@@ -79,13 +81,13 @@ export default function Home(){
                     />
                   )}
                   <Box sx={{ position:'absolute', bottom:12, left:12, bgcolor:'rgba(0,0,0,0.5)', color:'#fff', px:2, py:1, borderRadius:1 }}>
-                    <Typography variant="subtitle1">Live market snapshots</Typography>
-                    <Typography variant="caption">Quick glance at mandi activity</Typography>
+                    <Typography variant="subtitle1">{t('liveMarketSnapshots')}</Typography>
+                    <Typography variant="caption">{t('quickGlance')}</Typography>
                   </Box>
                 </Box>
                 <CardContent>
-                  <Typography variant="h6">Quick Summary</Typography>
-                  <Typography variant="body2" color="text.secondary">Price prediction using LSTM. Mandi ranking with XGBoost. Transport options and tracking.</Typography>
+                  <Typography variant="h6">{t('quickSummary')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('quickSummaryDesc')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -100,9 +102,9 @@ export default function Home(){
         <Container maxWidth="lg">
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" gutterBottom sx={{ fontWeight:700 }}>Our mission</Typography>
+              <Typography variant="h4" gutterBottom sx={{ fontWeight:700 }}>{t('ourMission')}</Typography>
               <Typography variant="h6" color="text.secondary" paragraph>
-                Empower small and marginal farmers with actionable market intelligence so they can sell at the right time, in the right place, and with minimal logistics cost.
+                {t('ourMissionDesc')}
               </Typography>
 
               <Grid container spacing={2} sx={{ mt:2 }}>
@@ -110,8 +112,8 @@ export default function Home(){
                   <Box sx={{ display:'flex', gap:2, alignItems:'flex-start' }}>
                     <MonetizationOnIcon color="primary" sx={{ fontSize:36 }} />
                     <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>Sustainable choices</Typography>
-                      <Typography variant="body2" color="text.secondary">Promote efficient logistics and reduce waste.</Typography>
+                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>{t('sustainableChoices')}</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('sustainableDesc')}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -119,8 +121,8 @@ export default function Home(){
                   <Box sx={{ display:'flex', gap:2, alignItems:'flex-start' }}>
                     <MapIcon color="primary" sx={{ fontSize:36 }} />
                     <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>Data-driven</Typography>
-                      <Typography variant="body2" color="text.secondary">Price forecasting and ranking powered by proven ML models.</Typography>
+                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>{t('dataDriven')}</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('dataDrivenDesc')}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -128,8 +130,8 @@ export default function Home(){
                   <Box sx={{ display:'flex', gap:2, alignItems:'flex-start' }}>
                     <LocalShippingIcon color="primary" sx={{ fontSize:36 }} />
                     <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>Transparent timelines</Typography>
-                      <Typography variant="body2" color="text.secondary">See arrival trends, seasonality and demand signals.</Typography>
+                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>{t('transparentTimelines')}</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('transparentDesc')}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -137,16 +139,16 @@ export default function Home(){
                   <Box sx={{ display:'flex', gap:2, alignItems:'flex-start' }}>
                     <SupportAgentIcon color="primary" sx={{ fontSize:36 }} />
                     <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>Community-first</Typography>
-                      <Typography variant="body2" color="text.secondary">Designed for farmer cooperatives and aggregators.</Typography>
+                      <Typography variant="subtitle1" sx={{ fontWeight:600 }}>{t('communityFirst')}</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('communityDesc')}</Typography>
                     </Box>
                   </Box>
                 </Grid>
               </Grid>
 
               <Box sx={{ display:'flex', gap:2, mt:4 }}>
-                <Button href="/input" variant="contained">Start now</Button>
-                <Button href="/about" variant="outlined">Read whitepaper</Button>
+                <Button href="/input" variant="contained">{t('startNow')}</Button>
+                <Button href="/about" variant="outlined">{t('readWhitepaper')}</Button>
               </Box>
             </Grid>
 
@@ -159,19 +161,19 @@ export default function Home(){
                 <Grid item xs={4}>
                   <Card sx={{ textAlign:'center', p:2 }}>
                     <Typography variant="h6" sx={{ fontWeight:700 }}>+120%</Typography>
-                    <Typography variant="caption" color="text.secondary">Avg. price improvement</Typography>
+                    <Typography variant="caption" color="text.secondary">{t('avgPriceImprovement')}</Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={4}>
                   <Card sx={{ textAlign:'center', p:2 }}>
                     <Typography variant="h6" sx={{ fontWeight:700 }}>500+</Typography>
-                    <Typography variant="caption" color="text.secondary">Mandis indexed</Typography>
+                    <Typography variant="caption" color="text.secondary">{t('mandisIndexed')}</Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={4}>
                   <Card sx={{ textAlign:'center', p:2 }}>
                     <Typography variant="h6" sx={{ fontWeight:700 }}>24/7</Typography>
-                    <Typography variant="caption" color="text.secondary">Transport options</Typography>
+                    <Typography variant="caption" color="text.secondary">{t('transportOptions')}</Typography>
                   </Card>
                 </Grid>
               </Grid>
@@ -183,14 +185,14 @@ export default function Home(){
       {/* Features */}
       <Box sx={{ bgcolor:'grey.50', py:8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h4" gutterBottom sx={{ textAlign:'center', fontWeight:600 }}>Core features</Typography>
+          <Typography variant="h4" gutterBottom sx={{ textAlign:'center', fontWeight:600 }}>{t('coreFeatures')}</Typography>
           <Grid container spacing={3} sx={{ mt:2 }}>
             <Grid item xs={12} md={4}>
               <Card>
                 <CardContent>
                   <Avatar sx={{ bgcolor:'primary.main', mb:2 }}><MapIcon /></Avatar>
-                  <Typography variant="h6">Mandi Ranking</Typography>
-                  <Typography variant="body2" color="text.secondary">Rank mandis by predicted price, distance and net profit.</Typography>
+                  <Typography variant="h6">{t('mandiRankingFeature')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('mandiRankingDesc')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -198,8 +200,8 @@ export default function Home(){
               <Card>
                 <CardContent>
                   <Avatar sx={{ bgcolor:'primary.main', mb:2 }}><LocalShippingIcon /></Avatar>
-                  <Typography variant="h6">Logistics</Typography>
-                  <Typography variant="body2" color="text.secondary">Integrated transport recommendations and partial truck aggregation.</Typography>
+                  <Typography variant="h6">{t('logistics')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('logisticsFeatureDesc')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -207,8 +209,8 @@ export default function Home(){
               <Card>
                 <CardContent>
                   <Avatar sx={{ bgcolor:'primary.main', mb:2 }}><SupportAgentIcon /></Avatar>
-                  <Typography variant="h6">Support</Typography>
-                  <Typography variant="body2" color="text.secondary">Guides and support to help farmers use the platform effectively.</Typography>
+                  <Typography variant="h6">{t('support')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('supportFeatureDesc')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -219,7 +221,7 @@ export default function Home(){
       {/* How it works - Roadmap */}
       <Box sx={{ py:8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h4" sx={{ fontWeight:700, mb:4, textAlign:'center' }}>How it works — Roadmap</Typography>
+          <Typography variant="h4" sx={{ fontWeight:700, mb:4, textAlign:'center' }}>{t('howItWorksRoadmap')}</Typography>
 
           {/* Responsive roadmap: horizontal on md+, vertical on xs */}
           <Box sx={{ display:'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', gap: { xs:4, md:2 } }}>
@@ -230,13 +232,13 @@ export default function Home(){
                   <HourglassBottomIcon sx={{ fontSize:32 }} />
                 </Box>
                 <Box sx={{ display:{ xs:'block', md:'none' } }}>
-                  <Typography variant="h6">Step 1</Typography>
-                  <Typography variant="body2" color="text.secondary">Enter details</Typography>
+                  <Typography variant="h6">{t('step1')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('enterDetails')}</Typography>
                 </Box>
               </Box>
               <Box sx={{ mt:2, display:{ xs:'none', md:'block' } }}>
-                <Typography variant="h6">1. Enter your details</Typography>
-                <Typography variant="body2" color="text.secondary">Provide crop, quantity and your location so we can assess markets.</Typography>
+                <Typography variant="h6">{t('enterYourDetails')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('enterDetailsDesc')}</Typography>
               </Box>
             </Box>
 
@@ -252,13 +254,13 @@ export default function Home(){
                   <TrendingUpIcon sx={{ fontSize:32 }} />
                 </Box>
                 <Box sx={{ display:{ xs:'block', md:'none' } }}>
-                  <Typography variant="h6">Step 2</Typography>
-                  <Typography variant="body2" color="text.secondary">Get predictions</Typography>
+                  <Typography variant="h6">{t('step2')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('getPredictions')}</Typography>
                 </Box>
               </Box>
               <Box sx={{ mt:2, display:{ xs:'none', md:'block' } }}>
-                <Typography variant="h6">2. Price prediction & ranking</Typography>
-                <Typography variant="body2" color="text.secondary">We run LSTM forecasts and XGBoost rankings to suggest the best mandis by net profit.</Typography>
+                <Typography variant="h6">{t('pricePredictionRanking')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('pricePredictionDesc')}</Typography>
               </Box>
             </Box>
 
@@ -274,13 +276,13 @@ export default function Home(){
                   <LocalShippingIcon sx={{ fontSize:32 }} />
                 </Box>
                 <Box sx={{ display:{ xs:'block', md:'none' } }}>
-                  <Typography variant="h6">Step 3</Typography>
-                  <Typography variant="body2" color="text.secondary">Choose transport</Typography>
+                  <Typography variant="h6">{t('step3')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('chooseTransport')}</Typography>
                 </Box>
               </Box>
               <Box sx={{ mt:2, display:{ xs:'none', md:'block' } }}>
-                <Typography variant="h6">3. Select transport</Typography>
-                <Typography variant="body2" color="text.secondary">Compare truck capacities, prices and ETAs from partner aggregators.</Typography>
+                <Typography variant="h6">{t('selectTransport')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('selectTransportDesc')}</Typography>
               </Box>
             </Box>
 
@@ -296,13 +298,13 @@ export default function Home(){
                   <CheckCircleIcon sx={{ fontSize:32 }} />
                 </Box>
                 <Box sx={{ display:{ xs:'block', md:'none' } }}>
-                  <Typography variant="h6">Step 4</Typography>
-                  <Typography variant="body2" color="text.secondary">Complete & track</Typography>
+                  <Typography variant="h6">{t('step4')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('completeAndTrack')}</Typography>
                 </Box>
               </Box>
               <Box sx={{ mt:2, display:{ xs:'none', md:'block' } }}>
-                <Typography variant="h6">4. Complete & track</Typography>
-                <Typography variant="body2" color="text.secondary">Monitor vehicle location and confirm delivery to complete the sale.</Typography>
+                <Typography variant="h6">{t('completeTrack')}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('completeTrackDesc')}</Typography>
               </Box>
             </Box>
           </Box>
@@ -314,29 +316,29 @@ export default function Home(){
        {/* Testimonials */}
       <Box sx={{ py:8, bgcolor:'grey.50' }}>
         <Container maxWidth="lg">
-          <Typography variant="h4" sx={{ fontWeight:700, mb:4, textAlign:'center' }}>What farmers say</Typography>
+          <Typography variant="h4" sx={{ fontWeight:700, mb:4, textAlign:'center' }}>{t('whatFarmersSay')}</Typography>
           <Grid container spacing={3}>
             {[
-              { text: 'Using Farm2Mandi I sold my produce at a much better price and saved on transport.', name: 'Ramesh Kumar', place: 'Andhra Pradesh', rating: 5 },
-              { text: 'The mandi recommendations are very practical and easy to follow.', name: 'Sita Devi', place: 'Uttar Pradesh', rating: 4 },
-              { text: 'Transport options cut costs — great for small farmers.', name: 'Vikram Singh', place: 'Punjab', rating: 5 }
-            ].map((t, i) => (
+              { text: t('testimonial1'), name: 'Ramesh Kumar', place: 'Andhra Pradesh', rating: 5 },
+              { text: t('testimonial2'), name: 'Sita Devi', place: 'Uttar Pradesh', rating: 4 },
+              { text: t('testimonial3'), name: 'Vikram Singh', place: 'Punjab', rating: 5 }
+            ].map((item, i) => (
               <Grid item xs={12} md={4} key={i}>
                 <Card sx={{ minHeight:200, display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
                   <CardContent>
                     <Box sx={{ display:'flex', gap:1, alignItems:'center', mb:1 }}>
                       <FormatQuoteIcon color="primary" />
-                      <Typography variant="body1" sx={{ fontWeight:600 }}>Farmer feedback</Typography>
+                      <Typography variant="body1" sx={{ fontWeight:600 }}>{t('farmerFeedback')}</Typography>
                     </Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb:2 }}>{t.text}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb:2 }}>{item.text}</Typography>
                   </CardContent>
                   <CardContent sx={{ pt:0 }}>
                     <Box sx={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                       <Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight:700 }}>{t.name}</Typography>
-                        <Typography variant="caption" color="text.secondary">{t.place}</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight:700 }}>{item.name}</Typography>
+                        <Typography variant="caption" color="text.secondary">{item.place}</Typography>
                       </Box>
-                      <Rating value={t.rating} readOnly size="small" />
+                      <Rating value={item.rating} readOnly size="small" />
                     </Box>
                   </CardContent>
                 </Card>
@@ -349,9 +351,9 @@ export default function Home(){
       {/* Transport CTA */}
       <Box sx={{ bgcolor:'primary.main', color:'primary.contrastText', py:6 }}>
         <Container maxWidth="lg" sx={{ textAlign:'center' }}>
-          <Typography variant="h5" sx={{ fontWeight:600 }}>Need transport?</Typography>
-          <Typography variant="body1" sx={{ mb:2 }}>Find trucks quickly and share partial capacity to reduce cost.</Typography>
-          <Button href="/transport" variant="contained" color="secondary">Find Trucks</Button>
+          <Typography variant="h5" sx={{ fontWeight:600 }}>{t('needTransport')}</Typography>
+          <Typography variant="body1" sx={{ mb:2 }}>{t('findTrucksDesc')}</Typography>
+          <Button href="/transport" variant="contained" color="secondary">{t('findTrucks')}</Button>
         </Container>
       </Box>
 
