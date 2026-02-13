@@ -101,6 +101,45 @@ export default function Recommendation(){
                   </Typography>
                 </Grid>
               )}
+              
+              {/* Enhanced Prediction Info */}
+              {result.predictionInfo && (
+                <>
+                  <Grid item xs={12}>
+                    <Divider sx={{ my: 1 }} />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2" color="text.secondary">Prediction Method</Typography>
+                    <Chip 
+                      label={result.predictionInfo.method || 'ML Model'} 
+                      color={result.predictionInfo.method === 'ML Model' ? 'success' : 'default'}
+                      size="small"
+                      sx={{ mt: 0.5 }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2" color="text.secondary">Confidence</Typography>
+                    <Typography variant="body1" sx={{ 
+                      color: result.predictionInfo.confidence > 0.7 ? '#2e7d32' : '#f57c00',
+                      fontWeight: 600
+                    }}>
+                      {result.predictionInfo.confidence ? 
+                        `${Math.round(result.predictionInfo.confidence * 100)}%` : 
+                        'N/A'
+                      }
+                    </Typography>
+                  </Grid>
+                  {result.predictionInfo.modelUsed && (
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary">ML Model</Typography>
+                      <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500 }}>
+                        {result.predictionInfo.modelUsed}
+                      </Typography>
+                    </Grid>
+                  )}
+                </>
+              )}
+              
               {mandis.length > 0 && (
                 <Grid item xs={12}>
                   <Divider sx={{ my: 1 }} />
@@ -126,12 +165,44 @@ export default function Recommendation(){
               mx: 'auto'
             }}
           >
-            <Typography variant="h6" color="text.secondary">
-              No markets found for this commodity in Andhra Pradesh.
+            <Typography variant="h5" sx={{ color: '#f57c00', mb: 2, fontWeight: 600 }}>
+              🔍 No Markets Found
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Please try a different commodity or check back later.
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              No markets found for {result.commodity || data.input?.commodity} in Andhra Pradesh.
             </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              This could be because:
+            </Typography>
+            <Box sx={{ textAlign: 'left', mb: 3, maxWidth: '400px', mx: 'auto' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                • Markets for this commodity are not yet registered in our database
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                • Try selecting a different commodity from the dropdown
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                • Check back later as we're constantly adding new markets
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Button 
+                component={Link} 
+                to="/input" 
+                variant="contained" 
+                sx={{ bgcolor: '#4caf50', '&:hover': { bgcolor: '#45a049' } }}
+              >
+                Try Different Commodity
+              </Button>
+              <Button 
+                component={Link} 
+                to="/browse" 
+                variant="outlined"
+                sx={{ borderColor: '#4caf50', color: '#2e7d32' }}
+              >
+                Browse All Markets
+              </Button>
+            </Box>
           </Paper>
         ) : (
           <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
@@ -268,12 +339,29 @@ export default function Recommendation(){
                           border: '1px solid #c8e6c9'
                         }}
                       >
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>Total Revenue:</strong> ₹{m.revenue} 
-                          <span style={{ color: '#666', fontSize: '0.9em' }}>
-                            {' '}(₹{m.predicted_price} × {result.quantity || 1000} kg)
-                          </span>
-                        </Typography>
+                        <Grid container spacing={1}>
+                          <Grid item xs={12}>
+                            <Typography variant="body2" color="text.secondary">
+                              <strong>Total Revenue:</strong> ₹{m.revenue} 
+                              <span style={{ color: '#666', fontSize: '0.9em' }}>
+                                {' '}(₹{m.predicted_price} × {result.quantity || 1000} kg)
+                              </span>
+                            </Typography>
+                          </Grid>
+                          {m.prediction_method && (
+                            <Grid item xs={12}>
+                              <Typography variant="body2" color="text.secondary">
+                                <strong>Prediction Method:</strong> 
+                                <Chip 
+                                  label={m.prediction_method} 
+                                  size="small" 
+                                  color={m.prediction_method === 'ML Model' ? 'success' : 'default'}
+                                  sx={{ ml: 1, height: 20, fontSize: '0.7rem' }}
+                                />
+                              </Typography>
+                            </Grid>
+                          )}
+                        </Grid>
                       </Paper>
                     )}
 

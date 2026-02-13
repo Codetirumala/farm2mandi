@@ -1,11 +1,41 @@
 const Price = require('../models/Price');
+const { predictPriceWithML } = require('./pythonMLService');
 
 /**
- * Predict price for a commodity based on historical data
- * Simple average of recent modal prices (last 30 days)
- * Can be enhanced with LSTM/ARIMA later if needed
+ * Predict price for a commodity using Python ML Service with historical data fallback
+ * Primary: Python ML service with TensorFlow models
+ * Fallback: Historical average of recent modal prices
  */
-async function predictPrice(commodity, date) {
+async function predictPrice(commodity, date, marketName = null, quantity = 1000) {
+  try {
+    console.log(`Predicting price for ${commodity} at ${marketName || 'any market'} on ${date}`);
+    
+    // First try Python ML service
+    try {
+      const mlResult = await predictPriceWithML(commodity, date, marketName, quantity);
+      console.log('Successfully used Python ML service for prediction:', mlResult);
+      return mlResult;
+    } catch (mlError) {
+      console.warn('Python ML service failed, falling back to historical data:', mlError.message);
+      
+      // Fallback to historical data method
+      return await predictPriceHistorical(commodity, date);
+    }
+  } catch (error) {
+    console.error('Error in predictPrice:', error);
+    return { 
+      predictedPrice: 2000, 
+      confidence: 0, 
+      method: 'Default',
+      error: error.message 
+    };
+  }
+}
+
+/**
+ * Historical prediction method (fallback when ML models are not available)
+ */
+async function predictPriceHistorical(commodity, date) {
   try {
     const queryDate = new Date(date);
     const thirtyDaysAgo = new Date(queryDate);
@@ -19,7 +49,12 @@ async function predictPrice(commodity, date) {
 
     if (recentPrices.length === 0) {
       // If no historical data, return a default price
-      return { predictedPrice: 2000, confidence: 0 };
+      return { 
+        predictedPrice: 2000, 
+        confidence: 0,
+        method: 'Default (No Data)',
+        message: 'No historical data available'
+      };
     }
 
     // Calculate average of modal prices
@@ -43,12 +78,20 @@ async function predictPrice(commodity, date) {
     return {
       predictedPrice: Math.round(predictedPrice * 100) / 100,
       confidence: Math.min(1, recentPrices.length / 50), // Confidence based on data points
-      historicalAverage: Math.round(average * 100) / 100
+      historicalAverage: Math.round(average * 100) / 100,
+      method: 'Historical Average',
+      dataPoints: recentPrices.length,
+      trend: Math.round(trend * 10000) / 100 // Percentage
     };
   } catch (error) {
-    console.error('Error predicting price:', error);
-    return { predictedPrice: 2000, confidence: 0, error: error.message };
+    console.error('Error in historical prediction:', error);
+    return { 
+      predictedPrice: 2000, 
+      confidence: 0,
+      method: 'Default (Error)',
+      error: error.message 
+    };
   }
 }
 
-module.exports = { predictPrice };
+module.exports = { predictPrice, predictPriceHistorical };

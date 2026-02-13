@@ -5,10 +5,61 @@ const Mandi = require('../models/Mandi');
 const Price = require('../models/Price');
 const { calculateDistance } = require('../utils/distance');
 const { predictPrice } = require('../utils/prediction');
+const { getModelInfo, checkMLService } = require('../utils/pythonMLService');
 
 // Test route to verify the router is working (no auth required)
 router.get('/test', (req, res) => {
   res.json({ message: 'Predict routes are working!', timestamp: new Date().toISOString() });
+});
+
+// Python ML service status endpoint
+router.get('/ml-status', async (req, res) => {
+  try {
+    const isAvailable = await checkMLService();
+    const modelInfo = await getModelInfo();
+    
+    res.json({
+      python_ml_service: isAvailable ? 'Available' : 'Unavailable',
+      ...modelInfo
+    });
+  } catch (error) {
+    console.error('Error checking ML service status:', error);
+    res.status(500).json({ error: 'Failed to check ML service status', message: error.message });
+  }
+});
+
+// Debug endpoint to check available ML models (no auth required for testing)
+router.get('/models', async (req, res) => {
+  try {
+    const modelInfo = await getModelInfo();
+    res.json(modelInfo);
+  } catch (error) {
+    console.error('Error getting model info:', error);
+    res.status(500).json({ error: 'Failed to get model information', message: error.message });
+  }
+});
+
+// ML prediction test endpoint (no auth required for testing)
+router.get('/test-ml', async (req, res) => {
+  try {
+    const { commodity = 'Rice', date = '2026-02-15', market = 'Kurnool', quantity = 1000 } = req.query;
+    
+    const { predictPriceWithML } = require('../utils/pythonMLService');
+    const result = await predictPriceWithML(commodity, date, market, parseFloat(quantity));
+    
+    res.json({
+      success: true,
+      input: { commodity, date, market, quantity },
+      result
+    });
+  } catch (error) {
+    console.error('ML test error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message,
+      input: req.query
+    });
+  }
 });
 
 /**
@@ -32,9 +83,13 @@ router.get('/predict', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid lat/lng coordinates' });
     }
 
-    // 1. Get predicted price
-    const pricePrediction = await predictPrice(commodity, date);
+    console.log(`Prediction request: ${commodity}, ${date}, ${farmerLat}, ${farmerLng}, ${qty}kg`);
+
+    // 1. Get predicted price using ML models (no specific market initially)
+    const pricePrediction = await predictPrice(commodity, date, null, qty);
     const predictedPrice = pricePrediction.predictedPrice;
+
+    console.log(`Base prediction result:`, pricePrediction);
 
     // 2. Get all mandis for that commodity in Andhra Pradesh only
     const mandis = await Mandi.find({
@@ -49,6 +104,8 @@ router.get('/predict', requireAuth, async (req, res) => {
       return res.json({
         commodity,
         predictedPrice,
+        quantity: qty,
+        predictionInfo: pricePrediction,
         mandis: [],
         message: 'No mandis found for this commodity'
       });
@@ -57,42 +114,89 @@ router.get('/predict', requireAuth, async (req, res) => {
     // 3-6. Calculate distance, transport cost, and profit for each mandi
     const mandiRecommendations = await Promise.all(
       mandis.map(async (mandi) => {
-        // 3. Calculate distance using Haversine formula
-        const distanceKm = calculateDistance(
-          farmerLat,
-          farmerLng,
-          mandi.latitude,
-          mandi.longitude
-        );
+        try {
+          // 3. Calculate distance using Haversine formula
+          const distanceKm = calculateDistance(
+            farmerLat,
+            farmerLng,
+            mandi.latitude,
+            mandi.longitude
+          );
 
-        // 4. Calculate transport cost (distance_km * 10)
-        const transportCost = distanceKm * 10;
+          // 4. Calculate transport cost (distance_km * 10)
+          const transportCost = distanceKm * 10;
 
-        // Get latest price for this mandi and commodity for better prediction
-        const latestPrice = await Price.findOne({
-          marketName: { $regex: new RegExp(mandi.name, 'i') },
-          commodity: { $regex: new RegExp(commodity, 'i') }
-        }).sort({ priceDate: -1 });
+          // Get mandi-specific ML prediction
+          let mandiPredictedPrice = predictedPrice;
+          let predictionMethod = 'Base prediction';
+          
+          try {
+            const mandiPrediction = await predictPrice(commodity, date, mandi.name, qty);
+            mandiPredictedPrice = mandiPrediction.predictedPrice;
+            predictionMethod = mandiPrediction.method || 'ML Model';
+            
+            console.log(`Mandi-specific prediction for ${mandi.name}:`, mandiPrediction);
+          } catch (mandiErr) {
+            console.warn(`Failed to get mandi-specific prediction for ${mandi.name}, using base:`, mandiErr.message);
+            
+            // Fallback: Get latest price for this mandi and commodity
+            const latestPrice = await Price.findOne({
+              marketName: { $regex: new RegExp(mandi.name, 'i') },
+              commodity: { $regex: new RegExp(commodity, 'i') }
+            }).sort({ priceDate: -1 });
 
-        // Use mandi-specific price if available, otherwise use predicted price
-        const mandiPredictedPrice = latestPrice ? latestPrice.modalPrice : predictedPrice;
+            if (latestPrice) {
+              mandiPredictedPrice = latestPrice.modalPrice;
+              predictionMethod = 'Historical price';
+            }
+          }
 
-        // 5. Calculate profit: profit = (predictedPrice * quantity) - transportCost
-        const revenue = mandiPredictedPrice * qty;
-        const profit = revenue - transportCost;
+          // 5. Calculate profit: profit = (predictedPrice * quantity) - transportCost
+          const revenue = mandiPredictedPrice * qty;
+          const profit = revenue - transportCost;
 
-        return {
-          name: mandi.name,
-          state: mandi.state,
-          district: mandi.district,
-          latitude: mandi.latitude,
-          longitude: mandi.longitude,
-          distance_km: Math.round(distanceKm * 100) / 100,
-          predicted_price: Math.round(mandiPredictedPrice * 100) / 100,
-          transport_cost: Math.round(transportCost * 100) / 100,
-          estimated_profit: Math.round(profit * 100) / 100,
-          revenue: Math.round(revenue * 100) / 100
-        };
+          return {
+            name: mandi.name,
+            state: mandi.state,
+            district: mandi.district,
+            latitude: mandi.latitude,
+            longitude: mandi.longitude,
+            distance_km: Math.round(distanceKm * 100) / 100,
+            predicted_price: Math.round(mandiPredictedPrice * 100) / 100,
+            prediction_method: predictionMethod,
+            transport_cost: Math.round(transportCost * 100) / 100,
+            estimated_profit: Math.round(profit * 100) / 100,
+            revenue: Math.round(revenue * 100) / 100
+          };
+        } catch (mandiError) {
+          console.error(`Error processing mandi ${mandi.name}:`, mandiError);
+          
+          // Return basic calculation on error
+          const distanceKm = calculateDistance(
+            farmerLat,
+            farmerLng,
+            mandi.latitude,
+            mandi.longitude
+          );
+          const transportCost = distanceKm * 10;
+          const revenue = predictedPrice * qty;
+          const profit = revenue - transportCost;
+
+          return {
+            name: mandi.name,
+            state: mandi.state,
+            district: mandi.district,
+            latitude: mandi.latitude,
+            longitude: mandi.longitude,
+            distance_km: Math.round(distanceKm * 100) / 100,
+            predicted_price: Math.round(predictedPrice * 100) / 100,
+            prediction_method: 'Fallback',
+            transport_cost: Math.round(transportCost * 100) / 100,
+            estimated_profit: Math.round(profit * 100) / 100,
+            revenue: Math.round(revenue * 100) / 100,
+            error: mandiError.message
+          };
+        }
       })
     );
 
@@ -106,9 +210,16 @@ router.get('/predict', requireAuth, async (req, res) => {
       commodity,
       predictedPrice,
       quantity: qty,
+      predictionInfo: {
+        method: pricePrediction.method,
+        confidence: pricePrediction.confidence,
+        modelUsed: pricePrediction.modelUsed,
+        trend: pricePrediction.trend
+      },
       farmerLocation: { lat: farmerLat, lng: farmerLng },
       mandis: topMandis,
-      allMandisCount: mandis.length
+      allMandisCount: mandis.length,
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Error in GET /predict:', error);
@@ -135,7 +246,7 @@ router.post('/predict', requireAuth, async (req, res) => {
       
       if (!isNaN(farmerLat) && !isNaN(farmerLng)) {
         // Reuse GET endpoint logic
-        const pricePrediction = await predictPrice(commodityName, date || new Date().toISOString().split('T')[0]);
+        const pricePrediction = await predictPrice(commodityName, date || new Date().toISOString().split('T')[0], null, qty);
         const predictedPrice = pricePrediction.predictedPrice;
 
         const mandis = await Mandi.find({

@@ -112,12 +112,24 @@ export default function InputPage(){
             onChange={e=>setForm({...form,commodity:e.target.value})}
             required
           >
-            <option value="Wheat">Wheat</option>
             <option value="Rice">Rice</option>
-            <option value="Maize">Maize</option>
+            <option value="Banana">Banana</option>
+            <option value="Cotton">Cotton</option>
             <option value="Tomato">Tomato</option>
             <option value="Potato">Potato</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Maize">Maize</option>
+            <option value="Mango">Mango</option>
+            <option value="Turmeric">Turmeric</option>
+            <option value="Wheat">Wheat</option>
             <option value="Onion">Onion</option>
+            <option value="Green Chilli">Green Chilli</option>
+            <option value="Brinjal">Brinjal</option>
+            <option value="Papaya">Papaya</option>
+            <option value="Jowar">Jowar (Sorghum)</option>
+            <option value="Arhar">Arhar (Tur/Red Gram)</option>
+            <option value="Bajra">Bajra (Pearl Millet)</option>
+            <option value="Black Gram Dal">Black Gram Dal (Urd Dal)</option>
           </select>
         </label>
         
