@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Container, Paper, TextField, Typography, Alert } from '@mui/material';
 import { forgotOtp, resetWithOtp } from '../api';
+import BackButton from '../components/BackButton';
 
 export default function Forgot(){
   const [email, setEmail] = useState('');
@@ -45,6 +46,7 @@ export default function Forgot(){
   return (
     <Box sx={{ minHeight:'70vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <Container maxWidth="sm">
+        <BackButton />
         <Paper sx={{ p:4 }} elevation={8}>
           <Typography variant="h5" sx={{ mb:2 }}>Forgot password</Typography>
 

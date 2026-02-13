@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Grid, Paper, TextField, Typography, Alert, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { getProfile, updateProfile, changePassword } from '../api';
+import BackButton from '../components/BackButton';
 
 export default function Profile() {
   const [userRole, setUserRole] = useState('farmer');
@@ -154,6 +155,7 @@ export default function Profile() {
   return (
     <Box sx={{ minHeight:'80vh', display:'flex', alignItems:'center', justifyContent:'center', py:6 }}>
       <Container maxWidth="md">
+        <BackButton />
         <Paper sx={{ p:4 }} elevation={8}>
           <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center', mb:2 }}>
             <Typography variant="h5" sx={{ fontWeight:700 }}>My profile</Typography>

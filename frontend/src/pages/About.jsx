@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Box, Typography, Grid, Button, Card, CardContent, Avatar, Divider, Stack, Chip, Grow } from '@mui/material';
+import BackButton from '../components/BackButton';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import MapIcon from '@mui/icons-material/Map';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -34,6 +35,7 @@ export default function About(){
 
   return (
     <Box sx={{ pb:8 }}>
+      <Container maxWidth="lg" sx={{ pt: 2 }}><BackButton /></Container>
       {/* Hero */}
       <Box sx={{
         position:'relative',

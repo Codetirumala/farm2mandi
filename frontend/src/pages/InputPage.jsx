@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { predict } from '../api';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 
 export default function InputPage(){
   const [form, setForm] = useState({ 
@@ -8,7 +9,7 @@ export default function InputPage(){
     date: new Date().toISOString().split('T')[0], 
     lat: '',
     lng: '',
-    quantity: '1000'
+    quantity: '10'
   });
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
@@ -97,6 +98,7 @@ export default function InputPage(){
 
   return (
     <div className="form card">
+      <BackButton />
       <h2>Input Produce Details</h2>
       {err && <div className="card" style={{color: 'red'}}>{err}</div>}
       {locationStatus && (
@@ -144,13 +146,14 @@ export default function InputPage(){
         </label>
 
         <label>
-          Quantity (kg):
+          Quantity (Quintal):
           <input 
             type="number" 
-            placeholder="1000" 
+            placeholder="10" 
             value={form.quantity} 
             onChange={e=>setForm({...form,quantity:e.target.value})}
             min="1"
+            step="0.1"
             required
           />
         </label>

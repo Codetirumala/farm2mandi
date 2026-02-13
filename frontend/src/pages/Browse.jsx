@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BackButton from '../components/BackButton';
 import { 
   Container, 
   Box, 
@@ -113,6 +114,7 @@ export default function Browse() {
       py: 6
     }}>
       <Container maxWidth="lg">
+        <BackButton />
         {/* Header */}
         <Box sx={{ textAlign: 'center', mb: 5 }}>
           <Typography 

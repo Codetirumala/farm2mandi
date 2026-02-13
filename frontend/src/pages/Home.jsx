@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Box, Typography, Button, Grid, Card, CardContent, Divider, Avatar } from '@mui/material';
+import BackButton from '../components/BackButton';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import MapIcon from '@mui/icons-material/Map';
@@ -29,6 +30,7 @@ export default function Home(){
 
   return (
     <div>
+      <BackButton />
     
       {/* Hero with video loop in a small card and animated subtitle */}
       <Box sx={{ bgcolor: 'background.paper', py: { xs:6, md:12 } }}>

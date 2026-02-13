@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 import { 
   Container, 
   Box, 
@@ -48,6 +49,7 @@ export default function Recommendation(){
       alignItems: 'center'
     }}>
       <Container maxWidth="lg" sx={{ width: '100%' }}>
+        <BackButton />
         {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: 5 }}>
           <Typography 
@@ -90,14 +92,14 @@ export default function Recommendation(){
               <Grid item xs={12} sm={4}>
                 <Typography variant="body2" color="text.secondary">Predicted Price</Typography>
                 <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
-                  ₹{result.predictedPrice}/kg
+                  ₹{result.predictedPrice}/Quintal
                 </Typography>
               </Grid>
               {result.quantity && (
                 <Grid item xs={12} sm={4}>
                   <Typography variant="body2" color="text.secondary">Quantity</Typography>
                   <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 600 }}>
-                    {result.quantity} kg
+                    {result.quantity} Quintal
                   </Typography>
                 </Grid>
               )}
@@ -344,7 +346,7 @@ export default function Recommendation(){
                             <Typography variant="body2" color="text.secondary">
                               <strong>Total Revenue:</strong> ₹{m.revenue} 
                               <span style={{ color: '#666', fontSize: '0.9em' }}>
-                                {' '}(₹{m.predicted_price} × {result.quantity || 1000} kg)
+                                {' '}(₹{m.predicted_price} × {result.quantity || 10} Quintal)
                               </span>
                             </Typography>
                           </Grid>

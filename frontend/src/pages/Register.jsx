@@ -4,6 +4,7 @@ import { Avatar, Box, Button, Container, Grid, Paper, TextField, Typography, Ale
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { register } from '../api';
 import { getProfile } from '../api';
+import BackButton from '../components/BackButton';
 
 export default function Register() {
   const [role, setRole] = useState('farmer');
@@ -101,6 +102,7 @@ export default function Register() {
     }}>
       <Grow in={true} timeout={600}>
         <Container maxWidth="sm">
+          <BackButton sx={{ mb: 1 }} />
           <Paper elevation={12} sx={{ p:5, borderRadius:2, boxShadow: '0 18px 40px rgba(8,30,15,0.18)' }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item>

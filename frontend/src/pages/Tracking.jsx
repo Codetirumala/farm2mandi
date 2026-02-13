@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { track } from '../api';
+import BackButton from '../components/BackButton';
 
 export default function Tracking(){
   const [id, setId] = useState('');
@@ -18,6 +19,7 @@ export default function Tracking(){
 
   return (
     <div className="form card">
+      <BackButton />
       <h2>Track Vehicle</h2>
       <form onSubmit={submit}>
         <input placeholder="Vehicle ID" value={id} onChange={e=>setId(e.target.value)} />

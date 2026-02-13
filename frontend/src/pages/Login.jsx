@@ -6,6 +6,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { login } from '../api';
 import { getProfile } from '../api';
+import BackButton from '../components/BackButton';
 
 export default function Login(){
   const [form, setForm] = useState({ email:'', password:'' });
@@ -68,6 +69,7 @@ export default function Login(){
     }}>
       <Grow in={true} timeout={600}>
         <Container maxWidth="sm">
+          <BackButton sx={{ mb: 1 }} />
           <Paper elevation={12} sx={{ p:5, borderRadius:2, boxShadow: '0 18px 40px rgba(8,30,15,0.18)' }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, Grid, Alert } from '@mui/material';
+import BackButton from '../components/BackButton';
 
 export default function Contact(){
   const [form, setForm] = useState({ name:'', email:'', phone:'', message:'' });
@@ -19,6 +20,7 @@ export default function Contact(){
   return (
     <Box sx={{ py:8 }}>
       <Container maxWidth="md">
+        <BackButton />
         <Typography variant="h4" sx={{ fontWeight:700, mb:2 }}>Contact us</Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
           Have a question or need help using Farm2Mandi? Send us a message and our team will get back to you.
